@@ -125,12 +125,12 @@ function Dashboard() {
 
       {/* ── Header ── */}
       <div>
-        <div className="flex items-center gap-2.5 mb-3">
+        {/* <div className="flex items-center gap-2.5 mb-3">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
             <Sparkles size={18} className="text-white" />
           </div>
           <span className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400">AI Studio</span>
-        </div>
+        </div> */}
         <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
           Content{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-violet-500 to-indigo-500">

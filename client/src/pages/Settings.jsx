@@ -20,12 +20,12 @@ function Settings() {
 
       {/* Header */}
       <div className="mb-10">
-        <div className="flex items-center gap-2 mb-3">
+        {/* <div className="flex items-center gap-2 mb-3">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center">
             <User size={15} className="text-white" />
           </div>
           <span className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400">AI Studio</span>
-        </div>
+        </div> */}
         <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
           Account{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">

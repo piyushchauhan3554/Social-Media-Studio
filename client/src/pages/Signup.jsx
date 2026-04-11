@@ -48,12 +48,12 @@ function Signup() {
 
         {/* Header */}
         <div className="flex flex-col items-center mb-9">
-          <div className="w-[60px] h-[60px] rounded-[16px] bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center mb-4 animate-float relative">
+          {/* <div className="w-[60px] h-[60px] rounded-[16px] bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center mb-4 animate-float relative">
             <div className="absolute inset-[-4px] rounded-[20px] bg-gradient-to-br from-violet-600/20 to-pink-500/20 blur-[10px] -z-10" />
             <Sparkles size={26} className="text-white" />
-          </div>
-          <p className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400 mb-2">AI Studio</p>
-          <h1 className="text-[25px] font-black text-white tracking-[-0.4px]">Join Studio.</h1>
+          </div> */}
+          {/* <p className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400 mb-2">AI Studio</p> */}
+          <h1 className="text-[25px] font-black text-white tracking-[-0.4px]">Join Studio</h1>
           <p className="text-[13.5px] text-white/35 mt-1">Create your account to start generating.</p>
         </div>
 
