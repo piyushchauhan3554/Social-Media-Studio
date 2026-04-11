@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, LayoutTemplate, History as HistoryIcon, LogOut, Settings as SettingsIcon } from "lucide-react";
+import { LayoutDashboard, LayoutTemplate, History as HistoryIcon, LogOut, Settings as SettingsIcon, Sparkles } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 function Sidebar() {
@@ -19,64 +19,96 @@ function Sidebar() {
   };
 
   return (
-    <div className="h-full flex flex-col pt-8 pb-4 px-4 shadow-[5px_0_30px_rgba(0,0,0,0.3)]">
-      
-      <div className="px-4 mb-10 hidden md:block">
-        <h2 className="text-3xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-br from-white to-white/50">
-          Studio.
-        </h2>
-        <p className="text-xs text-pink-400/80 mt-1 uppercase tracking-widest font-semibold">Creator Workspace</p>
+    <div className="h-full flex flex-col pt-7 pb-5 px-3 border-r border-white/[0.06]">
+
+      {/* Logo */}
+      <div className="px-3 mb-9 hidden md:block">
+        <div className="flex items-center gap-2.5 mb-1">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center flex-shrink-0">
+            <Sparkles size={15} className="text-white" />
+          </div>
+          <h2 className="text-[18px] font-black tracking-tight text-white">
+            AI Studio
+          </h2>
+        </div>
+        <p className="text-[10px] text-violet-400/70 uppercase tracking-[.18em] font-bold ml-[42px]">
+          Creator Workspace
+        </p>
       </div>
 
-      <nav className="flex-1 space-y-2">
+      {/* Nav */}
+      <nav className="flex-1 space-y-1">
         {menuItems.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
           const Icon = item.icon;
-          
           return (
-            <Link 
-              key={item.name} 
-              to={item.path} 
-              className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 ${
-                isActive 
-                  ? "bg-gradient-to-r from-pink-500/20 to-violet-500/20 text-pink-300 font-semibold border border-pink-500/30 shadow-[0_0_20px_rgba(236,72,153,0.15)]" 
-                  : "text-white/60 hover:bg-white/10 hover:text-white"
+            <Link
+              key={item.name}
+              to={item.path}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 relative group ${
+                isActive
+                  ? "bg-white/[0.07] text-white border border-white/[0.08]"
+                  : "text-white/40 hover:bg-white/[0.04] hover:text-white/75"
               }`}
             >
-              <Icon size={22} className={isActive ? "text-pink-400 drop-shadow-[0_0_8px_rgba(236,72,153,0.8)]" : ""} />
-              <span className="md:inline">{item.name}</span>
+              {/* Active left bar */}
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-gradient-to-b from-violet-500 to-pink-500" />
+              )}
+              <Icon
+                size={18}
+                className={isActive ? "text-violet-400" : "text-white/30 group-hover:text-white/60 transition-colors"}
+              />
+              <span className={`md:inline text-[13.5px] font-${isActive ? "bold" : "medium"}`}>
+                {item.name}
+              </span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="mt-auto space-y-2 pt-8 border-t border-white/10 text-white/50">
-        <div className="px-4 py-2 text-[10px] font-black uppercase tracking-widest opacity-30">Account</div>
-        
-        <Link 
+      {/* Bottom */}
+      <div className="space-y-1 pt-5 border-t border-white/[0.06]">
+        <p className="text-[10px] font-bold uppercase tracking-[.15em] text-white/20 px-3 mb-2">
+          Account
+        </p>
+
+        <Link
           to="/settings"
-          className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all ${
-            location.pathname === "/settings" ? "bg-white/10 text-white font-bold" : "hover:bg-white/10 text-white/60 hover:text-white"
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group ${
+            location.pathname === "/settings"
+              ? "bg-white/[0.07] text-white border border-white/[0.08]"
+              : "text-white/40 hover:bg-white/[0.04] hover:text-white/75"
           }`}
         >
-          <SettingsIcon size={22} />
-          <span className="md:inline">Settings</span>
+          <SettingsIcon
+            size={18}
+            className={
+              location.pathname === "/settings"
+                ? "text-violet-400"
+                : "text-white/30 group-hover:text-white/60 transition-colors"
+            }
+          />
+          <span className="md:inline text-[13.5px] font-medium">Settings</span>
         </Link>
-        
-        <button 
+
+        <button
           onClick={handleLogout}
-          className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl transition-all hover:bg-red-500/20 text-white/60 hover:text-red-400"
+          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 text-white/40 hover:bg-red-500/10 hover:text-red-400 group"
         >
-          <LogOut size={22} />
-          <span className="md:inline">Log Out</span>
+          <LogOut size={18} className="text-white/30 group-hover:text-red-400 transition-colors" />
+          <span className="md:inline text-[13.5px] font-medium">Log Out</span>
         </button>
 
-        <div className="mt-4 px-4 py-4 bg-white/5 rounded-2xl border border-white/5 flex items-center gap-3">
-           <div className="w-8 h-8 rounded-full bg-pink-500 flex items-center justify-center text-[10px] font-black">{user?.name?.charAt(0)}</div>
-           <div className="flex flex-col overflow-hidden">
-             <span className="text-xs font-bold truncate text-white/80">{user?.name}</span>
-             <span className="text-[10px] opacity-40 truncate">Free Plan</span>
-           </div>
+        {/* User Card */}
+        <div className="mt-3 px-3 py-3 bg-white/[0.03] border border-white/[0.06] rounded-xl flex items-center gap-3">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center text-[12px] font-black flex-shrink-0">
+            {user?.name?.charAt(0)?.toUpperCase()}
+          </div>
+          <div className="flex flex-col overflow-hidden min-w-0">
+            <span className="text-[13px] font-bold truncate text-white/75">{user?.name}</span>
+            <span className="text-[10px] text-white/25 truncate">Free Plan</span>
+          </div>
         </div>
       </div>
     </div>

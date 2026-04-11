@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { CopyPlus, TrendingUp } from "lucide-react";
+import { CopyPlus, TrendingUp, Sparkles } from "lucide-react";
 
 function Templates() {
   const navigate = useNavigate();
@@ -20,64 +20,85 @@ function Templates() {
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
+    show: { opacity: 1, transition: { staggerChildren: 0.08 } },
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    hidden: { opacity: 0, y: 18 },
+    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 280, damping: 24 } },
+  };
+
+  const categoryColors = {
+    Education:   "text-violet-400 bg-violet-500/10 border-violet-500/20",
+    Health:      "text-green-400 bg-green-500/10 border-green-500/20",
+    Parenting:   "text-pink-400 bg-pink-500/10 border-pink-500/20",
+    Wellness:    "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
+    Productivity:"text-amber-400 bg-amber-500/10 border-amber-500/20",
+    Growth:      "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
   };
 
   return (
-    <div className="max-w-6xl mx-auto flex flex-col pt-4">
-      
+    <div className="max-w-6xl mx-auto flex flex-col pt-4 px-4">
+
+      {/* Header */}
       <div className="mb-10">
-        <h1 className="text-4xl md:text-5xl font-black mb-3">
-          Popular <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Templates</span>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center">
+            <Sparkles size={15} className="text-white" />
+          </div>
+          <span className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400">AI Studio</span>
+        </div>
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
+          Popular{" "}
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+            Templates
+          </span>
         </h1>
-        <p className="text-white/60 text-lg">Click on any template to instantly generate a viral carousel.</p>
+        <p className="text-white/35 text-[15px]">
+          Click on any template to instantly generate a viral carousel.
+        </p>
       </div>
 
-      <motion.div 
+      {/* Grid */}
+      <motion.div
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       >
         {templates.map((tpl, index) => (
           <motion.div
             variants={itemVariants}
-            whileHover={{ y: -8, scale: 1.02 }}
+            whileHover={{ y: -5 }}
             whileTap={{ scale: 0.98 }}
             key={index}
             onClick={() => handleClick(tpl.title)}
-            className="group relative bg-slate-900/40 backdrop-blur-xl border border-white/10 p-6 rounded-3xl cursor-pointer overflow-hidden shadow-lg hover:shadow-[0_20px_40px_rgba(236,72,153,0.15)] transition-all duration-300"
+            className="group relative bg-white/[0.025] border border-white/[0.07] hover:border-violet-500/25 p-6 rounded-[22px] cursor-pointer overflow-hidden transition-all duration-300"
           >
-            {/* Background glow on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-violet-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-            
-            <div className="flex justify-between items-start mb-12">
-              <span className="text-xs font-bold uppercase tracking-wider text-pink-400 bg-pink-400/10 px-3 py-1 rounded-full border border-pink-400/20 flex items-center gap-1.5">
-                <TrendingUp size={14} />
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/0 group-hover:via-violet-500/50 to-transparent transition-all duration-500" />
+
+            {/* Subtle hover glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-violet-500/[0.04] to-pink-500/[0.04] opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none rounded-[22px]" />
+
+            {/* Category + Icon */}
+            <div className="flex justify-between items-start mb-10 relative z-10">
+              <span className={`text-[10.5px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border flex items-center gap-1.5 ${categoryColors[tpl.category]}`}>
+                <TrendingUp size={11} />
                 {tpl.category}
               </span>
-              <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/50 group-hover:text-pink-400 group-hover:bg-white/10 transition-colors">
-                <CopyPlus size={16} />
+              <div className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/[0.07] flex items-center justify-center text-white/25 group-hover:text-violet-400 group-hover:bg-violet-500/10 group-hover:border-violet-500/20 transition-all">
+                <CopyPlus size={14} />
               </div>
             </div>
 
-            <h3 className="text-xl md:text-2xl font-bold leading-tight group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-white/70 transition-all">
+            {/* Title */}
+            <h3 className="text-[17px] md:text-[18px] font-black leading-snug tracking-tight text-white/70 group-hover:text-white transition-colors duration-200 relative z-10">
               {tpl.title}
             </h3>
           </motion.div>
         ))}
       </motion.div>
-
     </div>
   );
 }

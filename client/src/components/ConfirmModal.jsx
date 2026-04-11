@@ -7,56 +7,68 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 min-h-screen">
+
         {/* Backdrop */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-slate-950/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-[#080510]/75 backdrop-blur-md"
         />
 
-        {/* Modal content */}
+        {/* Modal */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
+          initial={{ opacity: 0, scale: 0.96, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-md bg-slate-900 border border-white/10 rounded-[32px] p-8 shadow-2xl overflow-hidden"
+          exit={{ opacity: 0, scale: 0.96, y: 16 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-sm bg-[#0e0b1a] border border-white/[0.08] rounded-[24px] p-7 overflow-hidden"
+          style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.04)" }}
         >
-          {/* Decorative radial gradient */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-red-500/10 rounded-full blur-[80px] pointer-events-none" />
+          {/* Top accent line */}
+          <div className={`absolute top-0 left-0 w-full h-[1px] ${type === "danger" ? "bg-gradient-to-r from-transparent via-red-500/50 to-transparent" : "bg-gradient-to-r from-transparent via-violet-500/50 to-transparent"}`} />
 
-          <div className="flex justify-between items-start mb-6">
-            <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${type === "danger" ? "bg-red-500/10 text-red-500" : "bg-blue-500/10 text-blue-500"}`}>
-              <AlertTriangle size={24} />
+          {/* Glow */}
+          <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full blur-[60px] pointer-events-none ${type === "danger" ? "bg-red-500/10" : "bg-violet-500/10"}`} />
+
+          {/* Header */}
+          <div className="flex justify-between items-start mb-6 relative z-10">
+            <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${
+              type === "danger"
+                ? "bg-red-500/10 border-red-500/20 text-red-400"
+                : "bg-violet-500/10 border-violet-500/20 text-violet-400"
+            }`}>
+              <AlertTriangle size={20} />
             </div>
-            <button 
+            <button
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-white/25 hover:text-white/60 hover:bg-white/[0.05] transition-all"
             >
-              <X size={20} />
+              <X size={16} />
             </button>
           </div>
 
-          <h3 className="text-2xl font-black mb-2 italic">{title}</h3>
-          <p className="text-white/50 mb-8 leading-relaxed font-medium">{message}</p>
+          {/* Text */}
+          <div className="relative z-10 mb-7">
+            <h3 className="text-[19px] font-black tracking-tight text-white mb-2">{title}</h3>
+            <p className="text-[13.5px] text-white/35 leading-relaxed">{message}</p>
+          </div>
 
-          <div className="flex gap-3">
+          {/* Actions */}
+          <div className="flex gap-2.5 relative z-10">
             <button
               onClick={onClose}
-              className="flex-1 py-4 rounded-2xl bg-white/5 hover:bg-white/10 text-white font-bold transition-all text-sm active:scale-95"
+              className="flex-1 py-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/[0.07] text-white/60 hover:text-white font-bold text-[13.5px] transition-all active:scale-95"
             >
               Cancel
             </button>
             <button
-              onClick={() => {
-                onConfirm();
-                onClose();
-              }}
-              className={`flex-1 py-4 rounded-2xl font-black transition-all text-sm active:scale-95 shadow-lg ${
-                type === "danger" 
-                  ? "bg-red-600 hover:bg-red-500 text-white shadow-red-500/10" 
-                  : "bg-blue-600 hover:bg-blue-500 text-white shadow-blue-500/10"
+              onClick={() => { onConfirm(); onClose(); }}
+              className={`flex-1 py-3 rounded-xl font-bold text-[13.5px] transition-all active:scale-95 hover:-translate-y-[1px] ${
+                type === "danger"
+                  ? "bg-red-600 hover:bg-red-500 text-white hover:shadow-[0_6px_20px_rgba(239,68,68,0.3)]"
+                  : "bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white hover:shadow-[0_6px_20px_rgba(124,58,237,0.3)]"
               }`}
             >
               {confirmText}

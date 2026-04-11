@@ -4,57 +4,71 @@ import { Sparkles, ArrowRight } from "lucide-react";
 
 function Home() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center text-white px-4">
-      
-      <motion.div 
-        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="max-w-4xl text-center flex flex-col items-center"
+    <div className="flex-1 flex flex-col items-center justify-center text-white px-4 relative overflow-hidden min-h-screen bg-[#080510]">
+
+      {/* Orbs */}
+      <div className="absolute top-[-120px] left-[-100px] w-[500px] h-[500px] bg-violet-600/20 rounded-full blur-[110px] animate-pulse pointer-events-none" />
+      <div className="absolute bottom-[-100px] right-[-100px] w-[450px] h-[450px] bg-pink-500/20 rounded-full blur-[110px] animate-pulse delay-700 pointer-events-none" />
+      <div className="absolute top-[40%] left-[55%] w-[250px] h-[250px] bg-cyan-500/10 rounded-full blur-[80px] animate-pulse delay-1000 pointer-events-none" />
+
+      {/* Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.022)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.022)_1px,transparent_1px)] bg-[size:44px_44px] pointer-events-none" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-4xl text-center flex flex-col items-center relative z-10"
       >
-        <motion.div 
+
+        {/* Badge */}
+        <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="mb-6 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md flex items-center justify-center gap-2 text-sm font-medium text-pink-300 shadow-[0_0_15px_rgba(236,72,153,0.3)]"
+          transition={{ delay: 0.15 }}
+          className="mb-7 px-4 py-1.5 rounded-full bg-white/[0.06] border border-white/[0.1] flex items-center gap-2 text-[13px] font-bold text-violet-300 tracking-wide"
         >
-          <Sparkles size={16} />
+          <div className="w-1.5 h-1.5 rounded-full bg-violet-400 animate-pulse" />
+          <Sparkles size={13} />
           <span>The #1 AI Tool for Creators</span>
         </motion.div>
 
-        <h1 className="text-6xl md:text-8xl font-black mb-8 leading-[1.1] tracking-tighter">
-          Create Viral Content <br />
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 drop-shadow-[0_0_25px_rgba(236,72,153,0.6)]">
+        {/* Headline */}
+        <h1 className="text-6xl md:text-[88px] font-black mb-7 leading-[1.05] tracking-[-2px] text-white">
+          Create Viral Content
+          <br />
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-violet-500 to-indigo-500">
             with AI
           </span>
         </h1>
 
-        <motion.p 
+        {/* Subheading */}
+        <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mb-12 text-xl md:text-2xl text-white/70 max-w-2xl font-light"
+          transition={{ delay: 0.3 }}
+          className="mb-11 text-[18px] md:text-xl text-white/40 max-w-xl font-normal leading-relaxed"
         >
-          Turn your raw ideas into fully-designed, viral Instagram carousels in seconds. Stop stressing over design, start creating.
+          Turn your raw ideas into fully-designed, viral Instagram carousels
+          in seconds. Stop stressing over design, start creating.
         </motion.p>
 
+        {/* CTA */}
         <motion.div
-           initial={{ opacity: 0, y: 10 }}
-           animate={{ opacity: 1, y: 0 }}
-           transition={{ delay: 0.6 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
         >
           <Link
             to="/dashboard"
-            className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-pink-500/90 border border-transparent rounded-full shadow-[0_0_40px_rgba(236,72,153,0.6)] hover:bg-pink-400 hover:shadow-[0_0_60px_rgba(236,72,153,0.8)] hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-600 overflow-hidden"
+            className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-4 text-[15px] font-bold text-white rounded-2xl bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 transition-all hover:-translate-y-[2px] hover:shadow-[0_12px_36px_rgba(124,58,237,0.4)] active:scale-[.98] overflow-hidden"
           >
-            <span className="relative flex items-center gap-2 z-10">
-              Start Creating Now <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
-            </span>
-            <div className="absolute inset-0 h-full w-full bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            Start Creating Now
+            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform duration-200" />
           </Link>
         </motion.div>
-      </motion.div>
 
+      </motion.div>
     </div>
   );
 }

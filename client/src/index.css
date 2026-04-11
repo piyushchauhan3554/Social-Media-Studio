@@ -16,3 +16,21 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@keyframes shimmer {
+  0%, 100% { left: -80%; }
+  55% { left: 130%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@utility animate-shimmer {
+  animation: shimmer 5s ease-in-out 1s infinite;
+}
+
+@utility animate-float {
+  animation: float 3.5s ease-in-out infinite;
+}

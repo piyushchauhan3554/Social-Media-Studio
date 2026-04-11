@@ -25,67 +25,96 @@ function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-slate-950">
-      {/* Decorative Blur Orbs */}
-      <div className="absolute top-1/4 -left-20 w-80 h-80 bg-pink-500/20 rounded-full blur-[100px] animate-pulse" />
-      <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-violet-500/20 rounded-full blur-[100px] animate-pulse" />
+    <div className="min-h-screen flex items-center justify-center p-6 relative overflow-hidden bg-[#080510]">
 
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+      {/* Orbs */}
+      <div className="absolute top-[-100px] left-[-120px] w-[420px] h-[420px] bg-violet-600/20 rounded-full blur-[90px] animate-pulse" />
+      <div className="absolute bottom-[-80px] right-[-100px] w-[350px] h-[350px] bg-pink-500/20 rounded-full blur-[90px] animate-pulse delay-700" />
+      <div className="absolute top-1/2 left-[65%] w-[180px] h-[180px] bg-cyan-500/15 rounded-full blur-[70px] animate-pulse delay-1000" />
+
+      {/* Grid */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:44px_44px]" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
         animate={{ opacity: 1, y: 0 }}
-        className="w-full max-w-md bg-white/5 backdrop-blur-2xl border border-white/10 rounded-[40px] p-8 md:p-12 shadow-2xl relative z-10"
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-[430px] relative z-10 rounded-[28px] p-[2.8rem_2.4rem] bg-white/[0.035] border border-white/[0.08] overflow-hidden"
+        style={{
+          boxShadow: "inset 0 0 0 1px rgba(124,58,237,0.3)",
+        }}
       >
-        <div className="text-center mb-10">
-          <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-violet-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg shadow-pink-500/20">
-            <Sparkles size={32} className="text-white" />
+        {/* Shimmer */}
+        <div className="absolute top-[-60%] left-[-80%] w-[60%] h-[220%] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent -skew-x-12 animate-[shimmer_5s_ease-in-out_1s_infinite] pointer-events-none" />
+
+        {/* Top */}
+        <div className="flex flex-col items-center mb-9">
+          <div className="w-[60px] h-[60px] rounded-[16px] bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center mb-4 animate-[float_3.5s_ease-in-out_infinite] relative">
+            <div className="absolute inset-[-4px] rounded-[20px] bg-gradient-to-br from-violet-600/20 to-pink-500/20 blur-[10px] -z-10" />
+            <Sparkles size={26} className="text-white" />
           </div>
-          <h1 className="text-3xl font-black mb-2 italic">Welcome Back.</h1>
-          <p className="text-white/40 font-medium">Log in to continue creating viral content.</p>
+          <p className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400 mb-2">AI Studio</p>
+          <h1 className="text-[25px] font-black text-white tracking-[-0.4px]">Welcome back.</h1>
+          <p className="text-[13.5px] text-white/35 mt-1">Log in to continue creating viral content.</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-xs font-black uppercase tracking-widest text-white/40 ml-4">Email Address</label>
+        <form onSubmit={handleSubmit} className="space-y-[1.1rem]">
+          {/* Email */}
+          <div className="space-y-[.45rem]">
+            <label className="block text-[10.5px] font-bold tracking-[.14em] uppercase text-white/30 ml-[2px]">
+              Email Address
+            </label>
             <div className="relative group">
-              <Mail className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-pink-500 transition-colors" size={20} />
+              <Mail className="absolute left-[15px] top-1/2 -translate-y-1/2 w-[17px] h-[17px] text-white/22 group-focus-within:text-violet-400 transition-colors" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:border-pink-500/50 focus:bg-white/10 transition-all font-medium"
                 placeholder="name@example.com"
+                className="w-full bg-white/[0.045] border border-white/[0.08] rounded-[13px] py-[13px] pl-[45px] pr-[15px] text-white text-[14.5px] font-medium placeholder:text-white/18 outline-none focus:border-violet-500/55 focus:bg-violet-600/7 transition-all"
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <label className="text-xs font-black uppercase tracking-widest text-white/40 ml-4">Password</label>
+          {/* Password */}
+          <div className="space-y-[.45rem]">
+            <label className="block text-[10.5px] font-bold tracking-[.14em] uppercase text-white/30 ml-[2px]">
+              Password
+            </label>
             <div className="relative group">
-              <Lock className="absolute left-5 top-1/2 -translate-y-1/2 text-white/20 group-focus-within:text-pink-500 transition-colors" size={20} />
+              <Lock className="absolute left-[15px] top-1/2 -translate-y-1/2 w-[17px] h-[17px] text-white/22 group-focus-within:text-violet-400 transition-colors" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-14 pr-6 focus:outline-none focus:border-pink-500/50 focus:bg-white/10 transition-all font-medium"
-                placeholder="••••••••"
+                placeholder="••••••••••"
+                className="w-full bg-white/[0.045] border border-white/[0.08] rounded-[13px] py-[13px] pl-[45px] pr-[15px] text-white text-[14.5px] font-medium placeholder:text-white/18 outline-none focus:border-violet-500/55 focus:bg-violet-600/7 transition-all"
               />
             </div>
           </div>
 
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-500 hover:to-violet-500 py-5 rounded-2xl font-black text-lg transition-all shadow-lg hover:shadow-pink-500/20 flex items-center justify-center gap-3 disabled:opacity-50"
+            className="w-full mt-[1.6rem] py-[14px] rounded-[13px] bg-gradient-to-br from-violet-600 to-pink-500 hover:from-violet-700 hover:to-pink-600 text-white text-[15px] font-bold flex items-center justify-center gap-[9px] transition-all hover:-translate-y-[1px] hover:shadow-[0_10px_30px_rgba(124,58,237,0.3)] active:scale-[.99] disabled:opacity-50"
           >
-            {loading ? <Loader2 className="animate-spin" /> : <><LogIn size={20} /> Login Now</>}
+            {loading ? (
+              <Loader2 size={17} className="animate-spin" />
+            ) : (
+              <>
+                <LogIn size={17} />
+                Login Now
+              </>
+            )}
           </button>
         </form>
 
-        <p className="text-center mt-10 text-white/40 font-medium">
+        <p className="text-center mt-[1.8rem] text-[13px] text-white/28">
           Don't have an account?{" "}
-          <Link to="/signup" className="text-pink-500 hover:text-pink-400 underline decoration-pink-500/30 transition-colors">
+          <Link to="/signup" className="text-violet-400 font-semibold hover:text-violet-300 transition-colors">
             Sign up for free
           </Link>
         </p>
