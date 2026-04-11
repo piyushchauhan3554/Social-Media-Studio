@@ -1,13 +1,22 @@
 import Groq from "groq-sdk";
 
-const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+let groq;
+
+const initGroq = () => {
+  if (!groq) {
+    if (!process.env.GROQ_API_KEY) {
+      throw new Error("GROQ_API_KEY is missing in .env file");
+    }
+    groq = new Groq({
+      apiKey: process.env.GROQ_API_KEY,
+    });
+  }
+  return groq;
+};
 
 export const getAIResponse = async (idea, format = "1:1", theme = "Modern") => {
-  if (!process.env.GROQ_API_KEY) {
-    throw new Error("GROQ_API_KEY is missing in .env file");
-  }
+  const groqClient = initGroq();
+
 
   const prompt = `
 You are a Social Media Content Studio AI.
@@ -34,7 +43,7 @@ Rules:
 `;
 
   try {
-    const completion = await groq.chat.completions.create({
+    const completion = await groqClient.chat.completions.create({
       model: "llama-3.3-70b-versatile",
       messages: [
         {

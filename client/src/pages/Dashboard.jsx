@@ -51,37 +51,40 @@ function Dashboard() {
         { idea, format: format.value, theme: theme.name }
       );
 
-      const newSlides = response.data.slides;
-      console.log("AI returned slides:", newSlides);
-      setSlides(newSlides);
-
-      // --- ROBUST HISTORY SAVING ---
-      let history = [];
-      try {
-        const stored = localStorage.getItem("history");
-        history = stored ? JSON.parse(stored) : [];
-        if (!Array.isArray(history)) history = [];
-      } catch (e) {
-        console.error("History parse error:", e);
-        history = [];
-      }
-
-      const newEntry = {
-        idea,
-        slides: Array.isArray(newSlides) ? newSlides.map(s => (s && typeof s === 'object' ? (s.text || "No text") : (s || "No content"))) : [],
-        date: new Date().toLocaleString(),
-        format: format.value,
-        theme: theme.name
-      };
+      const rawSlides = response.data.slides;
       
-      console.log("Saving new history entry:", newEntry);
-      const updatedHistory = [newEntry, ...history].slice(0, 50);
-      localStorage.setItem("history", JSON.stringify(updatedHistory));
-      console.log("History saved successfully.");
+      // --- IMAGE PROXYING (CONVERT TO BASE64) ---
+      // We do this to bypass CORS restrictions during export
+      const proxiedSlides = await Promise.all(rawSlides.map(async (slide, index) => {
+        try {
+          const imgUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(slide.visualPrompt + " social media design aesthetic")}?width=1080&height=1080&nologo=true&seed=${index}`;
+          
+          const imgResponse = await axios.get(imgUrl, { responseType: 'blob' });
+          const reader = new FileReader();
+          
+          const base64Promise = new Promise((resolve) => {
+            reader.onloadend = () => resolve(reader.result);
+            reader.readAsDataURL(imgResponse.data);
+          });
+          
+          const base64 = await base64Promise;
+          return { ...slide, localImage: base64 };
+        } catch (e) {
+          console.error("Proxying failed for slide", index, e);
+          return { ...slide, localImage: null };
+        }
+      }));
+
+      console.log("Post saved & Images proxied:", proxiedSlides);
+      setSlides(proxiedSlides);
 
     } catch (error) {
-      console.error("Generation Error Details:", error);
-      alert(`Oops! Generation failed. Error: ${error.message}`);
+      console.error("Generation Error:", error);
+      if (error.response?.status === 401) {
+        alert("Session expired. Please log in again.");
+      } else {
+        alert(error.response?.data?.message || "Generation failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -92,7 +95,7 @@ function Dashboard() {
     if (updatedSlides[currentSlide] && typeof updatedSlides[currentSlide] === 'object') {
       updatedSlides[currentSlide] = { ...updatedSlides[currentSlide], text: newText };
     } else {
-      updatedSlides[currentSlide] = newText;
+      updatedSlides[currentSlide] = { text: newText, visualPrompt: "", localImage: null };
     }
     setSlides(updatedSlides);
   };
@@ -115,36 +118,37 @@ function Dashboard() {
     const node = document.getElementById("slide-card");
     if (!node) return;
 
-    setLoading(true); // Show loader while rendering
+    setLoading(true);
 
-    htmlToImage.toPng(node, { 
-      cacheBust: true,
-      useCORS: true,
+    htmlToImage.toBlob(node, { 
+      cacheBust: false, // No longer need cacheBust as it's local base64
       pixelRatio: 2,
       backgroundColor: '#000',
     })
-    .then((dataUrl) => {
+    .then((blob) => {
+      if (!blob) throw new Error("Export failed");
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.download = `social-studio-${Date.now()}.png`;
-      link.href = dataUrl;
+      link.download = `studio-export-${Date.now()}.png`;
+      link.href = url;
       link.click();
+      window.URL.revokeObjectURL(url);
       setLoading(false);
     })
     .catch(err => {
-      console.error("Download Error Details:", err);
-      // Fallback: Try JPG
-      htmlToImage.toJpeg(node, { quality: 0.95, useCORS: true })
-        .then((dataUrl) => {
-           const link = document.createElement("a");
-           link.download = `social-studio-${Date.now()}.jpg`;
-           link.href = dataUrl;
-           link.click();
-           setLoading(false);
-        })
-        .catch(innerErr => {
-          console.error("Total Export Failure:", innerErr);
-          alert("Could not export image. This is likely a CORS restriction on the AI image. Try using Chrome or Firefox.");
+      console.error("Export Error Detail:", err);
+      // Even simpler fallback
+      htmlToImage.toPng(node)
+        .then(dataUrl => {
+          const l = document.createElement("a");
+          l.download = `studio-export-${Date.now()}.png`;
+          l.href = dataUrl;
+          l.click();
           setLoading(false);
+        })
+        .catch(inner => {
+           alert("Export failed. Try a different browser.");
+           setLoading(false);
         });
     });
   };
@@ -296,20 +300,12 @@ function Dashboard() {
                     exit="exit"
                     className={`absolute inset-0 bg-gradient-to-br ${theme.bg} flex flex-col items-center justify-center p-12 text-center`}
                   >
-                    {showVisuals && slides[currentSlide]?.visualPrompt && (
+                    {showVisuals && slides[currentSlide]?.localImage && (
                       <div className="absolute inset-0 z-0">
-                        {imgLoading && (
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 z-10 backdrop-blur-sm">
-                             <Loader2 size={32} className="animate-spin text-white opacity-50" />
-                          </div>
-                        )}
                         <img 
-                          src={getImageUrl(slides[currentSlide].visualPrompt)} 
+                          src={slides[currentSlide].localImage} 
                           alt="AI Visual" 
-                          crossOrigin="anonymous"
-                          onLoadStart={() => setImgLoading(true)}
-                          onLoad={() => setImgLoading(false)}
-                          className={`w-full h-full object-cover transition-opacity duration-1000 ${imgLoading ? "opacity-0" : "opacity-70"}`}
+                          className="w-full h-full object-cover opacity-70"
                         />
                         <div className={`absolute inset-0 ${theme.overlay} mix-blend-multiply`} />
                       </div>

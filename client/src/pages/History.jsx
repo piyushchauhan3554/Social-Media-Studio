@@ -1,43 +1,56 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { Clock, Layers, ChevronRight, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Clock, Layers, ChevronRight, AlertCircle, Trash2, Loader2, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import ConfirmModal from "../components/ConfirmModal";
 
 function History() {
   const [history, setHistory] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  
+  // Custom Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState(null);
 
-  const loadHistory = () => {
+  const loadHistory = async () => {
     try {
       setIsRefreshing(true);
-      const rawData = localStorage.getItem("history");
-      console.log("Raw History from LocalStorage:", rawData);
-      
-      const data = JSON.parse(rawData) || [];
-      console.log("Parsed History Data:", data);
-
-      // Additional safety: filter out any corrupted entries
-      const validData = Array.isArray(data) ? data.filter(item => {
-        const isValid = item && typeof item === 'object' && (item.idea || item.slides);
-        if (!isValid) console.warn("Filtering out invalid history item:", item);
-        return isValid;
-      }) : [];
-      
-      console.log("Final Valid History to Display:", validData);
-      setHistory(validData);
+      const res = await axios.get("http://localhost:5000/api/posts");
+      setHistory(res.data);
       setError(null);
     } catch (err) {
       console.error("Failed to load history:", err);
-      setError("Could not load your history. Local storage might be corrupted.");
+      setError("Could not load your history from the cloud.");
     } finally {
       setIsRefreshing(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     loadHistory();
   }, []);
+
+  const handleDeleteClick = (item) => {
+    setItemToDelete(item);
+    setIsModalOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!itemToDelete) return;
+    
+    try {
+      await axios.delete(`http://localhost:5000/api/posts/${itemToDelete._id}`);
+      setHistory(history.filter(item => item._id !== itemToDelete._id));
+      setItemToDelete(null);
+    } catch (err) {
+      alert("Failed to delete item");
+    }
+  };
+
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -48,21 +61,30 @@ function History() {
   };
 
   const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } }
+    hidden: { opacity: 0, scale: 0.95 },
+    show: { opacity: 1, scale: 1, transition: { type: "spring", stiffness: 300, damping: 24 } }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+        <Loader2 size={40} className="animate-spin text-pink-500 mb-4" />
+        <p className="text-white/40 font-bold tracking-widest uppercase text-xs">Accessing Cloud Storage...</p>
+      </div>
+    );
+  }
 
   if (error) {
      return (
         <div className="max-w-6xl mx-auto flex flex-col items-center pt-20 text-center">
           <AlertCircle size={48} className="text-red-500 mb-4" />
-          <h2 className="text-2xl font-bold mb-2">Something went wrong</h2>
+          <h2 className="text-2xl font-bold mb-2">Sync Error</h2>
           <p className="text-white/50 mb-8">{error}</p>
           <button 
-            onClick={() => { localStorage.removeItem("history"); setHistory([]); setError(null); }}
-            className="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl text-sm font-bold"
+            onClick={loadHistory}
+            className="bg-pink-500 hover:bg-pink-600 text-white px-8 py-3 rounded-2xl text-sm font-bold shadow-lg shadow-pink-500/20 active:scale-95 transition-all"
           >
-            Clear History
+            Retry Sync
           </button>
         </div>
      );
@@ -76,7 +98,7 @@ function History() {
           <h1 className="text-4xl md:text-5xl font-black mb-3">
             Your <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">History</span>
           </h1>
-          <p className="text-white/60 text-lg">Past generations saved locally on your device.</p>
+          <p className="text-white/60 text-lg">Your AI creations, synced across all your devices.</p>
         </div>
         
         <button 
@@ -85,7 +107,7 @@ function History() {
           className="flex items-center gap-2 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl transition-all text-sm font-bold active:scale-95 disabled:opacity-50"
         >
           <Clock size={18} className={isRefreshing ? "animate-spin" : ""} />
-          Refresh List
+          Refresh Cloud
         </button>
       </div>
 
@@ -93,15 +115,15 @@ function History() {
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-12 text-center"
+          className="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-[40px] p-20 text-center"
         >
-          <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-6 text-white/30">
-            <Clock size={40} />
+          <div className="w-24 h-24 bg-gradient-to-br from-pink-500/10 to-violet-500/10 rounded-full flex items-center justify-center mx-auto mb-8 text-white/20">
+            <Sparkles size={48} />
           </div>
-          <h2 className="text-2xl font-bold mb-2">No history yet</h2>
-          <p className="text-white/50 mb-8">Go generate your first viral carousel!</p>
-          <Link to="/dashboard" className="bg-pink-500 hover:bg-pink-400 text-white font-bold py-3 px-8 rounded-full transition-colors shadow-lg shadow-pink-500/20">
-            Generate Now
+          <h2 className="text-3xl font-black mb-4 italic">The cloud is empty.</h2>
+          <p className="text-white/40 mb-10 text-lg max-w-md mx-auto">Your creative journey starts with a single idea. Go to the studio and build something amazing.</p>
+          <Link to="/dashboard" className="bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-500 hover:to-violet-500 text-white font-black py-4 px-10 rounded-2xl transition-all shadow-xl shadow-pink-500/20 active:scale-95">
+            Open Studio
           </Link>
         </motion.div>
       ) : (
@@ -111,41 +133,61 @@ function History() {
           animate="show"
           className="grid grid-cols-1 lg:grid-cols-2 gap-6"
         >
-          {history.map((item, index) => (
-            <motion.div
-              variants={itemVariants}
-              key={index}
-              className="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-6 rounded-3xl overflow-hidden hover:border-pink-500/30 transition-colors group flex flex-col"
-            >
-              <div className="flex justify-between items-start mb-4 border-b border-white/5 pb-4">
-                <div className="flex items-center gap-2 text-white/40 text-sm font-medium">
-                  <Clock size={16} />
-                  {item.date || "Unknown Date"}
+          <AnimatePresence>
+            {history.map((item) => (
+              <motion.div
+                variants={itemVariants}
+                key={item._id}
+                layout
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-[32px] overflow-hidden hover:border-pink-500/30 transition-all group flex flex-col relative"
+              >
+                <div className="flex justify-between items-start mb-6 border-b border-white/5 pb-6">
+                  <div className="flex items-center gap-2 text-white/40 text-xs font-black uppercase tracking-widest">
+                    <Clock size={14} />
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5 bg-pink-500/10 text-pink-400 px-3 py-1 rounded-full text-[10px] font-black uppercase border border-pink-500/20">
+                      <Layers size={14} />
+                      {item.slides?.length || 0} Slides
+                    </div>
+                    <button 
+                      onClick={() => handleDeleteClick(item)}
+                      className="text-white/20 hover:text-red-500 transition-colors p-1"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center gap-1.5 bg-pink-500/10 text-pink-400 px-3 py-1 rounded-full text-xs font-bold border border-pink-500/20">
-                  <Layers size={14} />
-                  {item.slides?.length || 0} Slides
+
+                <h3 className="text-2xl font-black mb-6 line-clamp-2 text-white/90 group-hover:text-white transition-colors leading-tight italic">
+                  "{item.idea}"
+                </h3>
+
+                <div className="bg-white/5 rounded-2xl p-6 flex-1 mb-6 border border-white/5">
+                  <p className="text-sm text-white/40 line-clamp-3 leading-relaxed">
+                    {item.slides?.[0]?.text || "No preview available."}
+                  </p>
                 </div>
-              </div>
 
-              <h3 className="text-xl font-bold mb-4 line-clamp-2 text-white/90 group-hover:text-white transition-colors">
-                "{item.idea || "Untitled Project"}"
-              </h3>
-
-              <div className="bg-white/5 rounded-2xl p-4 flex-1 mb-4">
-                <p className="text-sm text-white/60 line-clamp-3 italic">
-                  {item.slides?.[0] ? `${item.slides[0].substring(0, 100)}...` : "No slide content preview available."}
-                </p>
-              </div>
-
-              <Link to="/dashboard" state={{ idea: item.idea }} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors text-sm font-semibold mt-auto">
-                Reuse this Idea <ChevronRight size={16} />
-              </Link>
-            </motion.div>
-          ))}
+                <Link to="/dashboard" state={{ idea: item.idea }} className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-white text-slate-950 hover:bg-pink-100 transition-all text-sm font-black active:scale-95">
+                  Remix this Idea <ChevronRight size={18} />
+                </Link>
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </motion.div>
       )}
 
+      <ConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={confirmDelete}
+        title="Delete Creation?"
+        message={`Are you sure you want to permanently delete "${itemToDelete?.idea}"? This action cannot be undone.`}
+        confirmText="Delete permanently"
+      />
     </div>
   );
 }
