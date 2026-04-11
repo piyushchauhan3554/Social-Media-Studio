@@ -3,7 +3,21 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as htmlToImage from "html-to-image";
-import { Sparkles, Download, ChevronRight, ChevronLeft, Loader2, Image as ImageIcon } from "lucide-react";
+import { Sparkles, Download, ChevronRight, ChevronLeft, Loader2, Image as ImageIcon, Type, Palette, Smartphone, Square, Maximize2 } from "lucide-react";
+
+const THEMES = [
+  { name: "Modern", bg: "from-indigo-50 to-pink-50", text: "text-slate-800", accent: "bg-slate-800" },
+  { name: "Cyber", bg: "from-slate-900 to-slate-800", text: "text-pink-400", accent: "bg-pink-400" },
+  { name: "Sunset", bg: "from-orange-400 to-pink-500", text: "text-white", accent: "bg-white" },
+  { name: "Ocean", bg: "from-blue-600 to-indigo-800", text: "text-white", accent: "bg-white" },
+  { name: "Minimal", bg: "bg-white", text: "text-black", accent: "bg-black" },
+];
+
+const FORMATS = [
+  { name: "Square", value: "1:1", icon: Square, ratio: "aspect-square" },
+  { name: "Story", value: "9:16", icon: Smartphone, ratio: "aspect-[9/16]" },
+  { name: "Portrait", value: "4:5", icon: Maximize2, ratio: "aspect-[4/5]" },
+];
 
 function Dashboard() {
   const [idea, setIdea] = useState("");
@@ -11,6 +25,8 @@ function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState(1);
+  const [format, setFormat] = useState(FORMATS[0]);
+  const [theme, setTheme] = useState(THEMES[0]);
 
   const location = useLocation();
 
@@ -30,7 +46,7 @@ function Dashboard() {
 
       const response = await axios.post(
         "http://localhost:5000/api/generate",
-        { idea }
+        { idea, format: format.value, theme: theme.name }
       );
 
       const newSlides = response.data.slides;
@@ -41,6 +57,8 @@ function Dashboard() {
         idea,
         slides: newSlides,
         date: new Date().toLocaleString(),
+        format: format.value,
+        theme: theme.name
       };
       localStorage.setItem("history", JSON.stringify([newEntry, ...history]));
 
@@ -50,6 +68,12 @@ function Dashboard() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEditSlide = (newText) => {
+    const updatedSlides = [...slides];
+    updatedSlides[currentSlide] = newText;
+    setSlides(updatedSlides);
   };
 
   const nextSlide = () => {
@@ -98,126 +122,188 @@ function Dashboard() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto flex flex-col items-center">
+    <div className="max-w-6xl mx-auto flex flex-col items-center">
       
       {/* Header Area */}
       <div className="w-full mb-10 text-center md:text-left">
         <h1 className="text-4xl md:text-5xl font-black mb-3">
           AI Studio <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Generator</span>
         </h1>
-        <p className="text-white/60 text-lg">Type any idea to generate a stunning Instagram carousel.</p>
+        <p className="text-white/60 text-lg">Create, edit, and export viral social media content.</p>
       </div>
 
-      {/* Input Section */}
-      <div className="w-full bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-2 shadow-[0_0_40px_rgba(0,0,0,0.5)] mb-12 relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-r from-pink-500/10 via-purple-500/10 to-indigo-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+      <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
-        <textarea
-          value={idea}
-          onChange={(e) => setIdea(e.target.value)}
-          placeholder="e.g. 5 tips for better sleep... or just paste a blog post URL!"
-          className="w-full p-6 bg-transparent resize-none text-xl md:text-2xl font-medium focus:outline-none placeholder:text-white/30 text-white min-h-[120px]"
-        />
-        
-        <div className="flex justify-end p-2 border-t border-white/5">
+        {/* Left Column: Input & Controls */}
+        <div className="lg:col-span-1 space-y-6">
+          {/* Input Section */}
+          <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Type size={20} className="text-pink-500" />
+              Your Idea
+            </h3>
+            <textarea
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              placeholder="e.g. 5 steps to master React..."
+              className="w-full p-0 bg-transparent resize-none text-xl font-medium focus:outline-none placeholder:text-white/20 text-white min-h-[120px]"
+            />
+          </div>
+
+          {/* Formats */}
+          <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl leading-none">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <ImageIcon size={20} className="text-violet-500" />
+              Format
+            </h3>
+            <div className="grid grid-cols-3 gap-2">
+              {FORMATS.map((f) => {
+                const Icon = f.icon;
+                return (
+                  <button
+                    key={f.value}
+                    onClick={() => setFormat(f)}
+                    className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all ${
+                      format.value === f.value 
+                        ? "bg-pink-500/20 border-pink-500 text-pink-300 shadow-[0_0_15px_rgba(236,72,153,0.2)]" 
+                        : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"
+                    }`}
+                  >
+                    <Icon size={20} className="mb-1" />
+                    <span className="text-[10px] font-bold uppercase tracking-wider">{f.name}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Themes */}
+          <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl leading-none">
+            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+              <Palette size={20} className="text-blue-500" />
+              Theme
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {THEMES.map((t) => (
+                <button
+                  key={t.name}
+                  onClick={() => setTheme(t)}
+                  className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
+                    theme.name === t.name 
+                      ? "bg-blue-500/20 border-blue-500 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.2)]" 
+                      : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"
+                  }`}
+                >
+                  {t.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Generate Button */}
           <button
             onClick={handleGenerate}
             disabled={loading || !idea.trim()}
-            className="flex items-center gap-2 bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-500 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed px-8 py-3.5 rounded-2xl font-bold transition-all shadow-lg hover:shadow-[0_0_20px_rgba(236,72,153,0.4)]"
+            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-pink-600 to-violet-600 hover:from-pink-500 hover:to-violet-500 disabled:opacity-50 disabled:cursor-not-allowed py-5 rounded-3xl font-black text-lg transition-all shadow-lg hover:shadow-[0_0_30px_rgba(236,72,153,0.4)]"
           >
             {loading ? (
               <>
-                <Loader2 size={20} className="animate-spin" />
+                <Loader2 size={24} className="animate-spin" />
                 Generating...
               </>
             ) : (
               <>
-                <Sparkles size={20} />
-                Generate Slides
+                <Sparkles size={24} />
+                Generate Assets
               </>
             )}
           </button>
         </div>
-      </div>
 
-      {/* Results Section */}
-      {slides.length > 0 && (
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-[500px] flex flex-col items-center"
-        >
-          {/* Carousel Container (Instagram 1:1 Aspect Ratio) */}
-          <div className="w-full aspect-square relative rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] border border-white/10 bg-white">
-            
-            <AnimatePresence initial={false} custom={slideDirection} mode="wait">
-              <motion.div
-                id="slide-card"
-                key={currentSlide}
-                custom={slideDirection}
-                variants={slideVariants}
-                initial="initial"
-                animate="active"
-                exit="exit"
-                className="absolute inset-0 bg-gradient-to-br from-indigo-50 to-pink-50 flex items-center justify-center p-12 text-center"
-              >
-                <div className="w-full h-full flex flex-col justify-center items-center">
-                  <h2 className="text-3xl md:text-4xl font-black text-slate-800 leading-tight">
-                    {slides[currentSlide]}
-                  </h2>
+        {/* Right Column: Preview & Editor */}
+        <div className="lg:col-span-2 flex flex-col items-center">
+          {slides.length > 0 ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="w-full flex flex-col items-center"
+            >
+              <div className={`w-full max-w-[420px] ${format.ratio} relative rounded-[40px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.6)] border border-white/10 bg-white group`}>
+                
+                <AnimatePresence initial={false} custom={slideDirection} mode="wait">
+                  <motion.div
+                    id="slide-card"
+                    key={currentSlide}
+                    custom={slideDirection}
+                    variants={slideVariants}
+                    initial="initial"
+                    animate="active"
+                    exit="exit"
+                    className={`absolute inset-0 bg-gradient-to-br ${theme.bg} flex flex-col items-center justify-center p-12 text-center`}
+                  >
+                    <textarea
+                      value={slides[currentSlide]}
+                      onChange={(e) => handleEditSlide(e.target.value)}
+                      className={`w-full bg-transparent resize-none text-center font-black leading-tight border-none focus:ring-0 p-0 ${theme.text} ${format.value === "9:16" ? "text-2xl" : "text-3xl"}`}
+                      rows={5}
+                    />
+                    <div className={`w-16 h-1.5 rounded-full ${theme.accent} mt-8 opacity-30`} />
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Glass UI Overlays */}
+                <div className="absolute inset-x-0 bottom-10 flex justify-center gap-2 px-6 pointer-events-none">
+                  {slides.map((_, idx) => (
+                    <div 
+                      key={idx} 
+                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentSlide ? "w-8 bg-slate-800" : "w-1.5 bg-slate-400/30"}`}
+                    />
+                  ))}
                 </div>
-              </motion.div>
-            </AnimatePresence>
 
-            {/* Subtle Gradient overlay for the card edge vibe */}
-            <div className="absolute inset-0 border-[12px] border-white/50 pointer-events-none rounded-3xl mix-blend-overlay"></div>
-            
-            {/* Pagination Indicators inside image */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
-              {slides.map((_, idx) => (
-                <div 
-                  key={idx} 
-                  className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentSlide ? "bg-slate-800 scale-125" : "bg-slate-400/50"}`}
-                />
-              ))}
+                {/* Side Navigation */}
+                <button
+                  onClick={prevSlide}
+                  disabled={currentSlide === 0}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl disabled:opacity-0 transition-opacity hover:bg-white active:scale-90"
+                >
+                  <ChevronLeft size={28} />
+                </button>
+
+                <button
+                  onClick={nextSlide}
+                  disabled={currentSlide === slides.length - 1}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl disabled:opacity-0 transition-opacity hover:bg-white active:scale-90"
+                >
+                  <ChevronRight size={28} />
+                </button>
+              </div>
+
+              {/* Action Bar */}
+              <div className="w-full max-w-[420px] flex items-center justify-between mt-10 p-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl">
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase font-black text-white/30 tracking-widest">Live Editor</span>
+                  <span className="text-sm font-bold text-white/80">Slide {currentSlide + 1} / {slides.length}</span>
+                </div>
+                
+                <button
+                  onClick={downloadSlide}
+                  className="flex items-center gap-2 bg-white text-slate-900 hover:bg-pink-100 px-6 py-3 rounded-2xl font-black transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] active:scale-95"
+                >
+                  <Download size={20} />
+                  Export PNG
+                </button>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="w-full aspect-square max-w-[420px] border-2 border-dashed border-white/10 rounded-[40px] flex flex-col items-center justify-center text-white/20 p-12 text-center">
+              <Sparkles size={64} className="mb-6 opacity-50" />
+              <h4 className="text-xl font-bold mb-2 text-white/40">Preview Ready</h4>
+              <p className="text-sm">Enter an idea and choose your style to see the magic happen.</p>
             </div>
-
-            {/* Side Navigation Buttons overlay */}
-            <button
-              onClick={prevSlide}
-              disabled={currentSlide === 0}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 text-black flex items-center justify-center shadow-lg disabled:opacity-0 transition-opacity hover:bg-white"
-            >
-              <ChevronLeft size={24} />
-            </button>
-
-            <button
-              onClick={nextSlide}
-              disabled={currentSlide === slides.length - 1}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/80 text-black flex items-center justify-center shadow-lg disabled:opacity-0 transition-opacity hover:bg-white"
-            >
-              <ChevronRight size={24} />
-            </button>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="w-full flex items-center justify-between mt-8 gap-4">
-            <div className="text-sm font-medium text-white/50 bg-white/5 px-4 py-2 rounded-full border border-white/10">
-              Slide {currentSlide + 1} of {slides.length}
-            </div>
-            
-            <button
-              onClick={downloadSlide}
-              className="flex items-center gap-2 bg-white text-slate-900 hover:bg-pink-100 px-6 py-3 rounded-full font-bold transition-all shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]"
-            >
-              <Download size={20} />
-              Save Image
-            </button>
-          </div>
-
-        </motion.div>
-      )}
-
+          )}
+        </div>
+      </div>
     </div>
   );
 }

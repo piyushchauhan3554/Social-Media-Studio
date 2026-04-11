@@ -2,7 +2,7 @@ import { getAIResponse } from "../services/aiService.js";
 
 export const generateContent = async (req, res) => {
   try {
-    const { idea } = req.body;
+    const { idea, format, theme } = req.body;
 
     if (!idea) {
       return res.status(400).json({
@@ -10,7 +10,7 @@ export const generateContent = async (req, res) => {
       });
     }
 
-    const aiText = await getAIResponse(idea);
+    const aiText = await getAIResponse(idea, format, theme);
 
     // 🔥 FINAL UNIVERSAL PARSING
     const slides = aiText
