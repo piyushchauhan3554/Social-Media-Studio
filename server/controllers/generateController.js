@@ -10,21 +10,14 @@ export const generateContent = async (req, res) => {
       });
     }
 
-    const aiText = await getAIResponse(idea, format, theme);
-
-    // 🔥 FINAL UNIVERSAL PARSING
-    const slides = aiText
-      .split(/Slide\s*\d+:/)   // split using Slide 1:, Slide 2:
-      .filter((s) => s.trim() !== "")
-      .map((s, index) => `Slide ${index + 1}: ${s.trim()}`);
+    const aiResponse = await getAIResponse(idea, format, theme);
 
     res.status(200).json({
-      slides, // ✅ array send hoga
+      slides: aiResponse.slides, // ✅ array of {text, visualPrompt}
     });
 
   } catch (error) {
     console.error("Controller Error:", error.message);
-
     res.status(500).json({
       message: error.message,
     });

@@ -9,39 +9,28 @@ export const getAIResponse = async (idea, format = "1:1", theme = "Modern") => {
     throw new Error("GROQ_API_KEY is missing in .env file");
   }
 
-  // Determine text-length constraints based on visual format
-  let formatGuide = "";
-  if (format === "9:16") {
-    formatGuide = "- Format is vertical Story (9:16). KEEP TEXT EXTREMELY SHORT (max 10-15 words per slide). Use punchy, highly readable text.";
-  } else if (format === "1:1") {
-    formatGuide = "- Format is standard Square Carousel (1:1). Text should be balanced (max 25-30 words per slide).";
-  } else if (format === "4:5") {
-    formatGuide = "- Format is Portrait Post (4:5). Text can be slightly longer but keep it engaging.";
-  } else {
-    formatGuide = "- Keep text perfectly balanced per slide.";
-  }
-
   const prompt = `
-You are an expert Social Media Strategist and Copywriter.
-Generate high-converting social media slides.
+You are a Social Media Content Studio AI.
+Topic: ${idea}
+Format: ${format}
+Vibe: ${theme}
 
-Topic/Idea: ${idea}
-Requested Vibe/Theme: ${theme}
+Generate a 5-slide carousel in STRICT JSON format.
+Each slide must have "text" and "visualPrompt".
+The "visualPrompt" should be a 10-word description for an AI image generator (Pollinations/DALL-E) that matches the slide's content.
 
-Strictly follow this mapping format:
-
-Slide 1: <Hook (max 10 words)>
-Slide 2: <Problem/Struggle>
-Slide 3: <Core Explanation>
-Slide 4: <Actionable Solution>
-Slide 5: <Call to Action (CTA)>
+Example Output Format:
+{
+  "slides": [
+    { "text": "Hook text", "visualPrompt": "A futuristic digital workspace with neon lights" },
+    ...
+  ]
+}
 
 Rules:
-${formatGuide}
-- Only return the slide text content mapping exactly as Slide X: <content>.
-- Do NOT add any introduction, conclusion, or pleasantries out of the slide format.
-- Do NOT include image prompts, visual descriptions, or brackets like [Image: ...].
-- Write in a natural, engaging tone matching the requested vibe.
+- Output ONLY the raw JSON. No markdown blocks, no intro/outro.
+- Text must be engaging and relevant to the format.
+- Visual prompts should be descriptive (e.g., "3D isometric illustration of a brain", "Minimalist office with a cup of coffee").
 `;
 
   try {
@@ -54,7 +43,7 @@ ${formatGuide}
         },
       ],
       temperature: 0.7,
-      max_tokens: 600,
+      response_format: { type: "json_object" }, // Groq supports JSON mode
     });
 
     const output = completion.choices[0]?.message?.content;
@@ -63,16 +52,10 @@ ${formatGuide}
       throw new Error("Empty response from Groq API");
     }
 
-    return output;
+    return JSON.parse(output);
 
   } catch (error) {
-    console.error("Groq API Full Error:", error);
-
-    const message =
-      error?.error?.message ||
-      error?.message ||
-      "Unknown Groq API error";
-
-    throw new Error(`Groq API Error: ${message}`);
+    console.error("Groq API Error:", error);
+    throw new Error(`AI Service Error: ${error.message}`);
   }
 };

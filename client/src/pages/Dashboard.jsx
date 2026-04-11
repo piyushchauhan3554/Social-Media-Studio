@@ -3,14 +3,14 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as htmlToImage from "html-to-image";
-import { Sparkles, Download, ChevronRight, ChevronLeft, Loader2, Image as ImageIcon, Type, Palette, Smartphone, Square, Maximize2 } from "lucide-react";
+import { Sparkles, Download, ChevronRight, ChevronLeft, Loader2, Image as ImageIcon, Type, Palette, Smartphone, Square, Maximize2, Eye, EyeOff } from "lucide-react";
 
 const THEMES = [
-  { name: "Modern", bg: "from-indigo-50 to-pink-50", text: "text-slate-800", accent: "bg-slate-800" },
-  { name: "Cyber", bg: "from-slate-900 to-slate-800", text: "text-pink-400", accent: "bg-pink-400" },
-  { name: "Sunset", bg: "from-orange-400 to-pink-500", text: "text-white", accent: "bg-white" },
-  { name: "Ocean", bg: "from-blue-600 to-indigo-800", text: "text-white", accent: "bg-white" },
-  { name: "Minimal", bg: "bg-white", text: "text-black", accent: "bg-black" },
+  { name: "Modern", bg: "from-indigo-50 to-pink-50", text: "text-slate-800", accent: "bg-slate-800", overlay: "bg-white/20" },
+  { name: "Cyber", bg: "from-slate-900 to-slate-800", text: "text-pink-400", accent: "bg-pink-400", overlay: "bg-black/60" },
+  { name: "Sunset", bg: "from-orange-400 to-pink-500", text: "text-white", accent: "bg-white", overlay: "bg-black/40" },
+  { name: "Ocean", bg: "from-blue-600 to-indigo-800", text: "text-white", accent: "bg-white", overlay: "bg-black/40" },
+  { name: "Minimal", bg: "bg-white", text: "text-black", accent: "bg-black", overlay: "bg-white/10" },
 ];
 
 const FORMATS = [
@@ -21,12 +21,14 @@ const FORMATS = [
 
 function Dashboard() {
   const [idea, setIdea] = useState("");
-  const [slides, setSlides] = useState([]);
+  const [slides, setSlides] = useState([]); // [{text, visualPrompt}]
   const [loading, setLoading] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState(1);
   const [format, setFormat] = useState(FORMATS[0]);
   const [theme, setTheme] = useState(THEMES[0]);
+  const [showVisuals, setShowVisuals] = useState(true);
+  const [imgLoading, setImgLoading] = useState(false);
 
   const location = useLocation();
 
@@ -50,21 +52,36 @@ function Dashboard() {
       );
 
       const newSlides = response.data.slides;
+      console.log("AI returned slides:", newSlides);
       setSlides(newSlides);
 
-      const history = JSON.parse(localStorage.getItem("history")) || [];
+      // --- ROBUST HISTORY SAVING ---
+      let history = [];
+      try {
+        const stored = localStorage.getItem("history");
+        history = stored ? JSON.parse(stored) : [];
+        if (!Array.isArray(history)) history = [];
+      } catch (e) {
+        console.error("History parse error:", e);
+        history = [];
+      }
+
       const newEntry = {
         idea,
-        slides: newSlides,
+        slides: Array.isArray(newSlides) ? newSlides.map(s => (s && typeof s === 'object' ? (s.text || "No text") : (s || "No content"))) : [],
         date: new Date().toLocaleString(),
         format: format.value,
         theme: theme.name
       };
-      localStorage.setItem("history", JSON.stringify([newEntry, ...history]));
+      
+      console.log("Saving new history entry:", newEntry);
+      const updatedHistory = [newEntry, ...history].slice(0, 50);
+      localStorage.setItem("history", JSON.stringify(updatedHistory));
+      console.log("History saved successfully.");
 
     } catch (error) {
-      console.error(error);
-      alert("Error generating content");
+      console.error("Generation Error Details:", error);
+      alert(`Oops! Generation failed. Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -72,7 +89,11 @@ function Dashboard() {
 
   const handleEditSlide = (newText) => {
     const updatedSlides = [...slides];
-    updatedSlides[currentSlide] = newText;
+    if (updatedSlides[currentSlide] && typeof updatedSlides[currentSlide] === 'object') {
+      updatedSlides[currentSlide] = { ...updatedSlides[currentSlide], text: newText };
+    } else {
+      updatedSlides[currentSlide] = newText;
+    }
     setSlides(updatedSlides);
   };
 
@@ -94,13 +115,37 @@ function Dashboard() {
     const node = document.getElementById("slide-card");
     if (!node) return;
 
-    htmlToImage.toPng(node).then((dataUrl) => {
+    setLoading(true); // Show loader while rendering
+
+    htmlToImage.toPng(node, { 
+      cacheBust: true,
+      useCORS: true,
+      pixelRatio: 2,
+      backgroundColor: '#000',
+    })
+    .then((dataUrl) => {
       const link = document.createElement("a");
-      link.download = `slide-${currentSlide + 1}.png`;
+      link.download = `social-studio-${Date.now()}.png`;
       link.href = dataUrl;
       link.click();
-    }).catch(err => {
-      console.error("Oops, something went wrong!", err);
+      setLoading(false);
+    })
+    .catch(err => {
+      console.error("Download Error Details:", err);
+      // Fallback: Try JPG
+      htmlToImage.toJpeg(node, { quality: 0.95, useCORS: true })
+        .then((dataUrl) => {
+           const link = document.createElement("a");
+           link.download = `social-studio-${Date.now()}.jpg`;
+           link.href = dataUrl;
+           link.click();
+           setLoading(false);
+        })
+        .catch(innerErr => {
+          console.error("Total Export Failure:", innerErr);
+          alert("Could not export image. This is likely a CORS restriction on the AI image. Try using Chrome or Firefox.");
+          setLoading(false);
+        });
     });
   };
 
@@ -121,6 +166,11 @@ function Dashboard() {
     })
   };
 
+  const getImageUrl = (prompt) => {
+    if (!prompt) return "";
+    return `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt + " social media design aesthetic")}?width=1080&height=1080&nologo=true&seed=${currentSlide}`;
+  };
+
   return (
     <div className="max-w-6xl mx-auto flex flex-col items-center">
       
@@ -129,14 +179,13 @@ function Dashboard() {
         <h1 className="text-4xl md:text-5xl font-black mb-3">
           AI Studio <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">Generator</span>
         </h1>
-        <p className="text-white/60 text-lg">Create, edit, and export viral social media content.</p>
+        <p className="text-white/60 text-lg">Create viral visuals with AI-powered generation and editing.</p>
       </div>
 
       <div className="w-full grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         
         {/* Left Column: Input & Controls */}
         <div className="lg:col-span-1 space-y-6">
-          {/* Input Section */}
           <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl relative overflow-hidden group">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
               <Type size={20} className="text-pink-500" />
@@ -150,13 +199,21 @@ function Dashboard() {
             />
           </div>
 
-          {/* Formats */}
           <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl leading-none">
-            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <ImageIcon size={20} className="text-violet-500" />
-              Format
-            </h3>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <ImageIcon size={20} className="text-blue-500" />
+                Visuals
+              </h3>
+              <button 
+                onClick={() => setShowVisuals(!showVisuals)}
+                className={`p-2 rounded-xl border transition-all ${showVisuals ? "bg-blue-500/20 border-blue-500 text-blue-300" : "bg-white/5 border-white/10 text-white/40"}`}
+              >
+                {showVisuals ? <Eye size={18} /> : <EyeOff size={18} />}
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-white/5">
               {FORMATS.map((f) => {
                 const Icon = f.icon;
                 return (
@@ -177,10 +234,9 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Themes */}
           <div className="bg-slate-900/60 backdrop-blur-2xl border border-white/10 rounded-3xl p-6 shadow-xl leading-none">
             <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
-              <Palette size={20} className="text-blue-500" />
+              <Palette size={20} className="text-violet-500" />
               Theme
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -190,7 +246,7 @@ function Dashboard() {
                   onClick={() => setTheme(t)}
                   className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
                     theme.name === t.name 
-                      ? "bg-blue-500/20 border-blue-500 text-blue-300 shadow-[0_0_15px_rgba(59,130,246,0.2)]" 
+                      ? "bg-violet-500/20 border-violet-500 text-violet-300 shadow-[0_0_15px_rgba(139,92,246,0.2)]" 
                       : "bg-white/5 border-white/10 text-white/40 hover:bg-white/10 hover:text-white"
                   }`}
                 >
@@ -200,7 +256,6 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Generate Button */}
           <button
             onClick={handleGenerate}
             disabled={loading || !idea.trim()}
@@ -209,7 +264,7 @@ function Dashboard() {
             {loading ? (
               <>
                 <Loader2 size={24} className="animate-spin" />
-                Generating...
+                Studio Working...
               </>
             ) : (
               <>
@@ -228,7 +283,7 @@ function Dashboard() {
               animate={{ opacity: 1, scale: 1 }}
               className="w-full flex flex-col items-center"
             >
-              <div className={`w-full max-w-[420px] ${format.ratio} relative rounded-[40px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.6)] border border-white/10 bg-white group`}>
+              <div className={`w-full max-w-[420px] ${format.ratio} relative rounded-[40px] overflow-hidden shadow-[0_40px_100px_rgba(0,0,0,0.6)] border border-white/10 bg-black group`}>
                 
                 <AnimatePresence initial={false} custom={slideDirection} mode="wait">
                   <motion.div
@@ -241,22 +296,45 @@ function Dashboard() {
                     exit="exit"
                     className={`absolute inset-0 bg-gradient-to-br ${theme.bg} flex flex-col items-center justify-center p-12 text-center`}
                   >
-                    <textarea
-                      value={slides[currentSlide]}
-                      onChange={(e) => handleEditSlide(e.target.value)}
-                      className={`w-full bg-transparent resize-none text-center font-black leading-tight border-none focus:ring-0 p-0 ${theme.text} ${format.value === "9:16" ? "text-2xl" : "text-3xl"}`}
-                      rows={5}
-                    />
-                    <div className={`w-16 h-1.5 rounded-full ${theme.accent} mt-8 opacity-30`} />
+                    {showVisuals && slides[currentSlide]?.visualPrompt && (
+                      <div className="absolute inset-0 z-0">
+                        {imgLoading && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/20 z-10 backdrop-blur-sm">
+                             <Loader2 size={32} className="animate-spin text-white opacity-50" />
+                          </div>
+                        )}
+                        <img 
+                          src={getImageUrl(slides[currentSlide].visualPrompt)} 
+                          alt="AI Visual" 
+                          crossOrigin="anonymous"
+                          onLoadStart={() => setImgLoading(true)}
+                          onLoad={() => setImgLoading(false)}
+                          className={`w-full h-full object-cover transition-opacity duration-1000 ${imgLoading ? "opacity-0" : "opacity-70"}`}
+                        />
+                        <div className={`absolute inset-0 ${theme.overlay} mix-blend-multiply`} />
+                      </div>
+                    )}
+
+                    <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
+                       {/* Using div contentEditable instead of textarea for better image conversion compatibility */}
+                       <div
+                        contentEditable
+                        suppressContentEditableWarning={true}
+                        onBlur={(e) => handleEditSlide(e.currentTarget.textContent)}
+                        className={`w-full bg-transparent resize-none text-center font-black leading-tight border-none focus:ring-0 p-0 drop-shadow-2xl scrollbar-hide outline-none ${theme.text} ${format.value === "9:16" ? "text-2xl" : "text-3xl"}`}
+                      >
+                        {typeof slides[currentSlide] === 'object' ? slides[currentSlide].text : slides[currentSlide]}
+                      </div>
+                      <div className={`w-16 h-1.5 rounded-full ${theme.accent} mt-8 opacity-30 shadow-lg`} />
+                    </div>
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Glass UI Overlays */}
-                <div className="absolute inset-x-0 bottom-10 flex justify-center gap-2 px-6 pointer-events-none">
+                <div className="absolute inset-x-0 bottom-10 flex justify-center gap-2 px-6 pointer-events-none z-20">
                   {slides.map((_, idx) => (
                     <div 
                       key={idx} 
-                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentSlide ? "w-8 bg-slate-800" : "w-1.5 bg-slate-400/30"}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentSlide ? "w-8 bg-white shadow-lg" : "w-1.5 bg-white/30"}`}
                     />
                   ))}
                 </div>
@@ -265,7 +343,7 @@ function Dashboard() {
                 <button
                   onClick={prevSlide}
                   disabled={currentSlide === 0}
-                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl disabled:opacity-0 transition-opacity hover:bg-white active:scale-90"
+                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl disabled:opacity-0 transition-opacity hover:bg-white active:scale-90 z-30"
                 >
                   <ChevronLeft size={28} />
                 </button>
@@ -273,7 +351,7 @@ function Dashboard() {
                 <button
                   onClick={nextSlide}
                   disabled={currentSlide === slides.length - 1}
-                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl disabled:opacity-0 transition-opacity hover:bg-white active:scale-90"
+                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md text-black flex items-center justify-center shadow-xl disabled:opacity-0 transition-opacity hover:bg-white active:scale-90 z-30"
                 >
                   <ChevronRight size={28} />
                 </button>
@@ -282,12 +360,13 @@ function Dashboard() {
               {/* Action Bar */}
               <div className="w-full max-w-[420px] flex items-center justify-between mt-10 p-4 bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl">
                 <div className="flex flex-col">
-                  <span className="text-[10px] uppercase font-black text-white/30 tracking-widest">Live Editor</span>
+                  <span className="text-[10px] uppercase font-black text-white/30 tracking-widest">Studio Engine</span>
                   <span className="text-sm font-bold text-white/80">Slide {currentSlide + 1} / {slides.length}</span>
                 </div>
                 
                 <button
                   onClick={downloadSlide}
+                  type="button"
                   className="flex items-center gap-2 bg-white text-slate-900 hover:bg-pink-100 px-6 py-3 rounded-2xl font-black transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] hover:shadow-[0_0_40px_rgba(255,255,255,0.4)] active:scale-95"
                 >
                   <Download size={20} />
@@ -296,10 +375,10 @@ function Dashboard() {
               </div>
             </motion.div>
           ) : (
-            <div className="w-full aspect-square max-w-[420px] border-2 border-dashed border-white/10 rounded-[40px] flex flex-col items-center justify-center text-white/20 p-12 text-center">
-              <Sparkles size={64} className="mb-6 opacity-50" />
-              <h4 className="text-xl font-bold mb-2 text-white/40">Preview Ready</h4>
-              <p className="text-sm">Enter an idea and choose your style to see the magic happen.</p>
+            <div className="w-full aspect-square max-w-[420px] border-2 border-dashed border-white/10 rounded-[40px] flex flex-col items-center justify-center text-white/20 p-12 text-center bg-slate-900/40 backdrop-blur-xl">
+              <Sparkles size={64} className="mb-6 opacity-30" />
+              <h4 className="text-xl font-bold mb-2 text-white/40">Canvas Ready</h4>
+              <p className="text-sm leading-relaxed">Describe your idea, pick a mode,<br />and let AI build your visual story.</p>
             </div>
           )}
         </div>
