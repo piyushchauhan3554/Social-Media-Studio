@@ -97,19 +97,19 @@ function History() {
             </div>
             <span className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400">AI Studio</span>
           </div> */}
-          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2 text-slate-900 dark:text-white">
             Your{" "}
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
               History
             </span>
           </h1>
-          <p className="text-white/35 text-[15px]">Your AI creations, synced across all your devices.</p>
+          <p className="text-slate-500 dark:text-white/35 text-[15px]">Your AI creations, synced across all your devices.</p>
         </div>
 
         <button
           onClick={loadHistory}
           disabled={isRefreshing}
-          className="flex items-center gap-2 px-5 py-2.5 bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] rounded-xl transition-all text-[13px] font-bold text-white/50 hover:text-white/80 active:scale-95 disabled:opacity-40 self-start md:self-auto"
+          className="flex items-center gap-2 px-5 py-2.5 bg-slate-50 dark:bg-white/[0.03] hover:bg-slate-100 dark:hover:bg-white/[0.06] border border-black/[0.05] dark:border-white/[0.07] rounded-xl transition-all text-[13px] font-bold text-slate-500 dark:text-white/50 hover:text-slate-900 dark:hover:text-white/80 active:scale-95 disabled:opacity-40 self-start md:self-auto"
         >
           <Clock size={15} className={isRefreshing ? "animate-spin" : ""} />
           Refresh
@@ -121,14 +121,14 @@ function History() {
         <motion.div
           initial={{ opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-white/[0.02] border border-white/[0.06] rounded-[28px] p-20 text-center relative overflow-hidden"
+          className="bg-slate-50/50 dark:bg-white/[0.02] border border-black/[0.05] dark:border-white/[0.06] rounded-[28px] p-20 text-center relative overflow-hidden transition-colors duration-300"
         >
           <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
-          <div className="w-20 h-20 rounded-2xl bg-white/[0.04] border border-white/[0.07] flex items-center justify-center mx-auto mb-6">
-            <Sparkles size={32} className="text-white/20" />
+          <div className="w-20 h-20 rounded-2xl bg-white dark:bg-white/[0.04] border border-black/[0.05] dark:border-white/[0.07] flex items-center justify-center mx-auto mb-6 shadow-sm dark:shadow-none">
+            <Sparkles size={32} className="text-slate-300 dark:text-white/20" />
           </div>
-          <h2 className="text-2xl font-black mb-3 tracking-tight text-white/70">The cloud is empty.</h2>
-          <p className="text-white/30 mb-9 text-[15px] max-w-sm mx-auto leading-relaxed">
+          <h2 className="text-2xl font-black mb-3 tracking-tight text-slate-700 dark:text-white/70">The cloud is empty.</h2>
+          <p className="text-slate-400 dark:text-white/30 mb-9 text-[15px] max-w-sm mx-auto leading-relaxed">
             Your creative journey starts with a single idea. Go to the studio and build something amazing.
           </p>
           <Link
@@ -153,14 +153,14 @@ function History() {
                 key={item._id}
                 layout
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-white/[0.025] border border-white/[0.07] hover:border-violet-500/25 rounded-[24px] p-6 flex flex-col relative overflow-hidden group transition-all"
+                className="bg-slate-50/50 dark:bg-white/[0.025] border border-black/[0.05] dark:border-white/[0.07] hover:border-violet-500/25 rounded-[24px] p-6 flex flex-col relative overflow-hidden group transition-all"
               >
                 {/* Top accent line on hover */}
                 <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/0 group-hover:via-violet-500/40 to-transparent transition-all duration-500" />
 
                 {/* Card Header */}
-                <div className="flex justify-between items-center mb-5 pb-5 border-b border-white/[0.05]">
-                  <div className="flex items-center gap-1.5 text-white/25 text-[11px] font-bold uppercase tracking-widest">
+                <div className="flex justify-between items-center mb-5 pb-5 border-b border-black/[0.05] dark:border-white/[0.05]">
+                  <div className="flex items-center gap-1.5 text-slate-400 dark:text-white/25 text-[11px] font-bold uppercase tracking-widest">
                     <Clock size={12} />
                     {new Date(item.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                   </div>
@@ -179,13 +179,13 @@ function History() {
                 </div>
 
                 {/* Idea Title */}
-                <h3 className="text-[17px] font-black mb-4 line-clamp-2 text-white/80 group-hover:text-white transition-colors leading-snug tracking-tight">
+                <h3 className="text-[17px] font-black mb-4 line-clamp-2 text-slate-800 dark:text-white/80 group-hover:text-slate-900 dark:group-hover:text-white transition-colors leading-snug tracking-tight">
                   "{item.idea}"
                 </h3>
 
                 {/* Preview Text */}
-                <div className="bg-white/[0.03] border border-white/[0.05] rounded-xl p-4 flex-1 mb-5">
-                  <p className="text-[13px] text-white/30 line-clamp-3 leading-relaxed">
+                <div className="bg-white dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.05] rounded-xl p-4 flex-1 mb-5 transition-colors">
+                  <p className="text-[13px] text-slate-400 dark:text-white/30 line-clamp-3 leading-relaxed">
                     {item.slides?.[0]?.text || "No preview available."}
                   </p>
                 </div>

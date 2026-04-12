@@ -131,29 +131,29 @@ function Dashboard() {
           </div>
           <span className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400">AI Studio</span>
         </div> */}
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2">
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2 text-slate-900 dark:text-white">
           Content{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-violet-500 to-indigo-500">
             Generator
           </span>
         </h1>
-        <p className="text-white/40 text-[15px]">Turn your raw ideas into stunning viral carousels.</p>
+        <p className="text-slate-500 dark:text-white/40 text-[15px]">Turn your raw ideas into stunning viral carousels.</p>
       </div>
 
       {/* ── Idea Input — Full Width ── */}
-      <div className="w-full bg-white/[0.03] border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden group hover:border-violet-500/30 transition-all">
+      <div className="w-full bg-slate-50 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl p-6 relative overflow-hidden group hover:border-violet-500/30 transition-all">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
         <div className="flex items-center gap-2 mb-4">
           <Type size={14} className="text-pink-400" />
-          <span className="text-[11px] font-bold tracking-[.14em] uppercase text-white/30">Your Idea</span>
+          <span className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-white/30">Your Idea</span>
         </div>
         <textarea
           value={idea}
           onChange={(e) => setIdea(e.target.value)}
           placeholder="e.g. 5 healthy breakfast ideas for kids that are quick and delicious..."
-          className="w-full bg-transparent resize-none text-[16px] font-medium focus:outline-none placeholder:text-white/15 text-white min-h-[70px] leading-relaxed"
+          className="w-full bg-transparent resize-none text-[16px] font-medium focus:outline-none placeholder:text-slate-300 dark:placeholder:text-white/15 text-slate-900 dark:text-white min-h-[70px] leading-relaxed"
         />
-        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/[0.04] to-transparent group-hover:via-violet-500/20 transition-all" />
+        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-black/[0.02] dark:via-white/[0.04] to-transparent group-hover:via-violet-500/20 transition-all" />
       </div>
 
       {/* ── Controls + Preview ── */}
@@ -163,19 +163,19 @@ function Dashboard() {
         <div className="lg:col-span-2 flex flex-col gap-4">
 
           {/* Visuals + Format */}
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
+          <div className="bg-slate-50 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
             <div className="flex justify-between items-center mb-5">
               <div className="flex items-center gap-2">
                 <ImageIcon size={14} className="text-blue-400" />
-                <span className="text-[11px] font-bold tracking-[.14em] uppercase text-white/30">Visuals & Format</span>
+                <span className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-white/30">Visuals & Format</span>
               </div>
               <button
                 onClick={() => setShowVisuals(!showVisuals)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-[11px] font-bold transition-all ${
                   showVisuals
-                    ? "bg-blue-500/15 border-blue-400/40 text-blue-300"
-                    : "bg-white/[0.04] border-white/[0.08] text-white/30"
+                    ? "bg-blue-500/15 border-blue-400/40 text-blue-600 dark:text-blue-300"
+                    : "bg-black/[0.02] dark:bg-white/[0.04] border-black/[0.05] dark:border-white/[0.08] text-slate-400 dark:text-white/30"
                 }`}
               >
                 {showVisuals ? <Eye size={12} /> : <EyeOff size={12} />}
@@ -191,8 +191,8 @@ function Dashboard() {
                     onClick={() => setFormat(f)}
                     className={`flex flex-col items-center justify-center py-4 rounded-xl border transition-all gap-2 ${
                       format.value === f.value
-                        ? "bg-pink-500/15 border-pink-400/50 text-pink-300 shadow-[0_0_20px_rgba(236,72,153,0.15)]"
-                        : "bg-white/[0.03] border-white/[0.07] text-white/30 hover:text-white/60 hover:bg-white/[0.06] hover:border-white/[0.12]"
+                        ? "bg-pink-500/10 dark:bg-pink-500/15 border-pink-400/50 text-pink-600 dark:text-pink-300 shadow-[0_0_20px_rgba(236,72,153,0.1)]"
+                        : "bg-white dark:bg-white/[0.03] border-black/[0.05] dark:border-white/[0.07] text-slate-400 dark:text-white/30 hover:text-slate-600 dark:hover:text-white/60 hover:bg-slate-50 dark:hover:bg-white/[0.06] hover:border-black/[0.1] dark:hover:border-white/[0.12]"
                     }`}
                   >
                     <Icon size={20} />
@@ -204,11 +204,11 @@ function Dashboard() {
           </div>
 
           {/* Theme */}
-          <div className="bg-white/[0.03] border border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
+          <div className="bg-slate-50 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl p-5 relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-400/50 to-transparent" />
             <div className="flex items-center gap-2 mb-4">
               <Palette size={14} className="text-violet-400" />
-              <span className="text-[11px] font-bold tracking-[.14em] uppercase text-white/30">Theme</span>
+              <span className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-white/30">Theme</span>
             </div>
             <div className="grid grid-cols-1 gap-2">
               {THEMES.map((t) => (
@@ -217,14 +217,14 @@ function Dashboard() {
                   onClick={() => setTheme(t)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl border text-[13px] font-bold transition-all ${
                     theme.name === t.name
-                      ? "bg-violet-500/15 border-violet-400/50 text-violet-200 shadow-[0_0_20px_rgba(139,92,246,0.15)]"
-                      : "bg-white/[0.03] border-white/[0.07] text-white/40 hover:text-white/70 hover:bg-white/[0.06] hover:border-white/[0.12]"
+                      ? "bg-violet-500/10 dark:bg-violet-500/15 border-violet-400/50 text-violet-700 dark:text-violet-200 shadow-[0_0_20px_rgba(139,92,246,0.1)]"
+                      : "bg-white dark:bg-white/[0.03] border-black/[0.05] dark:border-white/[0.07] text-slate-500 dark:text-white/40 hover:text-slate-900 dark:hover:text-white/70 hover:bg-slate-50 dark:hover:bg-white/[0.06] hover:border-black/[0.1] dark:hover:border-white/[0.12]"
                   }`}
                 >
                   <div className={`w-4 h-4 rounded-md bg-gradient-to-br flex-shrink-0 ${t.bg}`} />
                   {t.name}
                   {theme.name === t.name && (
-                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-400" />
+                    <div className="ml-auto w-1.5 h-1.5 rounded-full bg-violet-600 dark:bg-violet-400" />
                   )}
                 </button>
               ))}
@@ -235,7 +235,7 @@ function Dashboard() {
           <button
             onClick={handleGenerate}
             disabled={loading || !idea.trim()}
-            className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 disabled:opacity-40 disabled:cursor-not-allowed py-4 rounded-2xl font-bold text-[15px] transition-all hover:-translate-y-[1px] hover:shadow-[0_10px_32px_rgba(124,58,237,0.4)] active:scale-[.99] shadow-lg shadow-violet-500/20"
+            className="w-full flex items-center justify-center gap-2.5 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 disabled:opacity-40 disabled:cursor-not-allowed py-4 rounded-2xl font-bold text-[15px] text-white transition-all hover:-translate-y-[1px] hover:shadow-[0_10px_32px_rgba(124,58,237,0.4)] active:scale-[.99] shadow-lg shadow-violet-500/20"
           >
             {loading ? (
               <><Loader2 size={20} className="animate-spin" /> Generating...</>
@@ -331,16 +331,16 @@ function Dashboard() {
               </div>
 
               {/* Action Bar */}
-              <div className="w-full max-w-[420px] flex items-center justify-between px-5 py-4 bg-white/[0.03] border border-white/[0.08] rounded-2xl">
+              <div className="w-full max-w-[420px] flex items-center justify-between px-5 py-4 bg-slate-50 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.08] rounded-2xl shadow-sm dark:shadow-none transition-colors duration-300">
                 <div>
-                  <p className="text-[9px] uppercase font-bold tracking-[.15em] text-white/20">Studio Engine</p>
-                  <p className="text-[13px] font-bold text-white/60 mt-0.5">
+                  <p className="text-[9px] uppercase font-bold tracking-[.15em] text-slate-400 dark:text-white/20">Studio Engine</p>
+                  <p className="text-[13px] font-bold text-slate-600 dark:text-white/60 mt-0.5">
                     Slide {currentSlide + 1} / {slides.length}
                   </p>
                 </div>
                 <button
                   onClick={downloadSlide}
-                  className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(124,58,237,0.35)] active:scale-95"
+                  className="flex items-center gap-2 bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:-translate-y-[1px] hover:shadow-[0_6px_20px_rgba(124,58,237,0.35)] active:scale-95"
                 >
                   <Download size={15} />
                   Export PNG
@@ -351,15 +351,15 @@ function Dashboard() {
             /* Empty State */
             <div className="relative w-full flex flex-col items-center justify-center">
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div className="w-[280px] h-[280px] bg-gradient-to-br from-violet-600/10 to-pink-500/10 rounded-full blur-[60px]" />
+                <div className="w-[280px] h-[280px] bg-gradient-to-br from-violet-600/5 to-pink-500/5 dark:from-violet-600/10 dark:to-pink-500/10 rounded-full blur-[60px]" />
               </div>
-              <div className="w-full max-w-[420px] aspect-square border border-dashed border-white/[0.08] rounded-[28px] flex flex-col items-center justify-center gap-5 bg-white/[0.01] relative">
-                <div className="w-16 h-16 rounded-2xl bg-white/[0.04] border border-white/[0.08] flex items-center justify-center">
-                  <Sparkles size={28} className="text-white/25" />
+              <div className="w-full max-w-[420px] aspect-square border border-dashed border-black/[0.1] dark:border-white/[0.08] rounded-[28px] flex flex-col items-center justify-center gap-5 bg-slate-50/50 dark:bg-white/[0.01] relative transition-colors duration-300">
+                <div className="w-16 h-16 rounded-2xl bg-white dark:bg-white/[0.04] border border-black/[0.05] dark:border-white/[0.08] flex items-center justify-center shadow-sm dark:shadow-none">
+                  <Sparkles size={28} className="text-slate-300 dark:text-white/25" />
                 </div>
                 <div className="text-center">
-                  <p className="text-[15px] font-bold text-white/30 mb-1.5">Canvas Ready</p>
-                  <p className="text-[13px] text-white/18 leading-relaxed">
+                  <p className="text-[15px] font-bold text-slate-400 dark:text-white/30 mb-1.5">Canvas Ready</p>
+                  <p className="text-[13px] text-slate-300 dark:text-white/18 leading-relaxed">
                     Describe your idea, pick a format,<br />and let AI build your visual story.
                   </p>
                 </div>
