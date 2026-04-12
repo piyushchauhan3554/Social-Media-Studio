@@ -1,34 +1,27 @@
 import Sidebar from "./Sidebar";
-import { Sparkles } from "lucide-react";
+import Navbar from "./Navbar";
+import AnimatedBackground from "./AnimatedBackground";
 
 export default function DashboardLayout({ children }) {
   return (
-    <div className="flex h-screen overflow-hidden text-slate-900 dark:text-white relative z-10 w-full max-w-[1600px] mx-auto bg-white dark:bg-[#080510] transition-colors duration-300">
-
-      {/* Sidebar */}
-      <div className="hidden md:block w-64 shrink-0 bg-slate-50/50 dark:bg-[#080510]/60 backdrop-blur-xl border-r border-black/[0.05] dark:border-white/[0.06]">
+    <div className="flex h-screen bg-slate-50 dark:bg-[#020617] transition-colors duration-500 overflow-hidden">
+      {/* Sidebar - Fix position and surface */}
+      <aside className="hidden md:flex w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0F172A] z-40 relative">
         <Sidebar />
-      </div>
+      </aside>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col relative w-full overflow-y-auto overflow-x-hidden scroll-smooth">
-
-        {/* Mobile Header */}
-        <div className="md:hidden sticky top-0 z-40 bg-white/80 dark:bg-[#080510]/80 backdrop-blur-xl border-b border-black/[0.05] dark:border-white/[0.06] px-5 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center">
-              <Sparkles size={13} className="text-white" />
-            </div>
-            <span className="text-[16px] font-black tracking-tight text-slate-900 dark:text-white">
-              AI Studio
-            </span>
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col relative overflow-hidden">
+        {/* Navbar on top of dashboard */}
+        <Navbar />
+        
+        <div className="flex-1 overflow-y-auto scrollbar-hide relative">
+          <AnimatedBackground />
+          <div className="relative z-10 p-6 md:p-8">
+            {children}
           </div>
         </div>
-
-        <main className="flex-1 p-5 md:p-8">
-          {children}
-        </main>
-      </div>
+      </main>
     </div>
   );
 }

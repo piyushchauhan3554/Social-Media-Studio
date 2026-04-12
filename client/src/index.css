@@ -1,38 +1,66 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Outfit:wght@100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
   --color-brand-bg: var(--bg-primary);
   --color-brand-text: var(--text-primary);
+  --color-brand-indigo: #6366f1;
+  --color-brand-rose: #f43f5e;
+  --color-brand-violet: #8b5cf6;
+  --color-brand-pink: #ec4899;
 }
 
 @variant dark (&:where(.dark, .dark *));
 
 :root {
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fafc;
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --border-primary: rgba(0, 0, 0, 0.08);
+  /* Pristine Glass - Light Theme */
+  --bg-primary: #f8fafc;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #f1f5f9;
+  
+  --text-primary: #0f172a;    /* Slate 900 */
+  --text-secondary: #475569;  /* Slate 600 */
+  --text-muted: #94a3b8;      /* Slate 400 */
+  
+  --border-subtle: rgba(15, 23, 42, 0.06);
+  --border-strong: rgba(15, 23, 42, 0.12);
+  
+  --accent-base: #6366f1;
+  --accent-gradient: linear-gradient(135deg, #6366f1 0%, #f43f5e 100%);
+  
   color-scheme: light;
 }
 
 .dark {
-  --bg-primary: #080510;
-  --bg-secondary: #0f0a1d;
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.6);
-  --border-primary: rgba(255, 255, 255, 0.06);
+  /* Midnight Onyx - Dark Theme */
+  --bg-primary: #020617;      /* Slate 950 */
+  --bg-surface: #0f172a;       /* Slate 900 */
+  --bg-surface-hover: #1e293b; /* Slate 800 */
+  
+  --text-primary: #f8fafc;    /* Slate 50 */
+  --text-secondary: #94a3b8;  /* Slate 400 */
+  --text-muted: #64748b;      /* Slate 500 */
+  
+  --border-subtle: rgba(248, 250, 252, 0.08);
+  --border-strong: rgba(248, 250, 252, 0.15);
+  
+  --accent-base: #8b5cf6;
+  --accent-gradient: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+  
   color-scheme: dark;
 }
 
 @layer utilities {
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
   .scrollbar-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari and Opera */
+    display: none;
+  }
+  
+  .glass-surface {
+    @apply backdrop-blur-xl bg-white/70 dark:bg-slate-900/70 border border-black/5 dark:border-white/10;
   }
 }
 
@@ -43,7 +71,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.02em;
 }
 
 @keyframes shimmer {
@@ -62,8 +96,4 @@ body {
 
 @utility animate-float {
   animation: float 3.5s ease-in-out infinite;
-}
-
-*{
-    font-family: Outfit;
 }

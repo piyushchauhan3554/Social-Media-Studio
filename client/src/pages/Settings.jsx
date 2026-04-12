@@ -20,13 +20,13 @@ function Settings() {
 
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2 text-slate-900 dark:text-white">
+        <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-2 text-slate-900 dark:text-slate-50">
           Account{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-pink-500 to-violet-500">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 to-indigo-600">
             Settings
           </span>
         </h1>
-        <p className="text-slate-500 dark:text-white/35 text-[15px]">Manage your profile and account preferences.</p>
+        <p className="text-slate-500 dark:text-slate-400 text-[16px] font-medium">Manage your profile and account preferences.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -39,12 +39,12 @@ function Settings() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white dark:bg-white/[0.025] border border-black/[0.05] dark:border-white/[0.07] rounded-[24px] p-7 relative overflow-hidden shadow-sm dark:shadow-none"
+            className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-[28px] p-7 relative overflow-hidden shadow-sm"
           >
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-pink-500/40 to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-rose-500/30 to-transparent" />
 
-            <h3 className="text-[13px] font-bold tracking-[.12em] uppercase text-slate-400 dark:text-white/30 mb-6 flex items-center gap-2">
-              <User size={13} className="text-pink-400" />
+            <h3 className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500 mb-6 flex items-center gap-2">
+              <User size={14} className="text-rose-500" />
               Profile Information
             </h3>
 
@@ -52,50 +52,50 @@ function Settings() {
 
               {/* Name */}
               <div className="space-y-[.45rem]">
-                <label className="block text-[10.5px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-white/25 ml-[2px]">
+                <label className="block text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500 ml-[2px]">
                   Full Name
                 </label>
                 <div className="relative group">
-                  <User className="absolute left-[15px] top-1/2 -translate-y-1/2 w-[17px] h-[17px] text-slate-300 dark:text-white/20 group-focus-within:text-violet-600 dark:group-focus-within:text-violet-400 transition-colors" />
+                  <User className="absolute left-[15px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-300 dark:text-slate-700 group-focus-within:text-indigo-600 dark:group-focus-within:text-indigo-400 transition-colors" />
                   <input
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-50 dark:bg-white/[0.045] border border-black/[0.05] dark:border-white/[0.08] rounded-[13px] py-[13px] pl-[45px] pr-[15px] text-slate-900 dark:text-white text-[14.5px] font-medium outline-none focus:border-violet-500/55 focus:bg-violet-600/[0.03] dark:focus:bg-violet-600/[0.07] transition-all"
+                    className="w-full bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[14px] py-[13px] pl-[45px] pr-[15px] text-slate-900 dark:text-slate-100 text-[15px] font-medium outline-none focus:border-indigo-500/50 focus:bg-white dark:focus:bg-slate-800 transition-all shadow-sm"
                   />
                 </div>
               </div>
 
               {/* Email (disabled) */}
               <div className="space-y-[.45rem]">
-                <label className="block text-[10.5px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-white/25 ml-[2px]">
+                <label className="block text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500 ml-[2px]">
                   Email Address
                 </label>
-                <div className="relative opacity-50 cursor-not-allowed">
-                  <Mail className="absolute left-[15px] top-1/2 -translate-y-1/2 w-[17px] h-[17px] text-slate-300 dark:text-white/20" />
+                <div className="relative opacity-60 cursor-not-allowed">
+                  <Mail className="absolute left-[15px] top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-slate-300 dark:text-slate-700" />
                   <input
                     type="email"
                     disabled
                     value={user?.email || ""}
-                    className="w-full bg-slate-100 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.06] rounded-[13px] py-[13px] pl-[45px] pr-[15px] text-slate-500 dark:text-white/40 text-[14.5px] font-medium outline-none cursor-not-allowed"
+                    className="w-full bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[14px] py-[13px] pl-[45px] pr-[15px] text-slate-500 dark:text-slate-500 text-[15px] font-medium outline-none cursor-not-allowed shadow-none"
                   />
                 </div>
-                <p className="text-[11px] text-slate-400 dark:text-white/20 ml-[2px]">Email cannot be changed yet.</p>
+                <p className="text-[11px] text-slate-400 dark:text-slate-600 ml-[2px] font-medium tracking-tight">Email cannot be changed yet.</p>
               </div>
 
               {/* Save Button */}
               <button
                 type="submit"
-                className={`flex items-center gap-2 px-7 py-3 rounded-xl font-bold text-[14px] transition-all active:scale-95 hover:-translate-y-[1px] ${
+                className={`flex items-center gap-2 px-8 py-3.5 rounded-xl font-bold text-[14px] transition-all active:scale-95 hover:-translate-y-[1px] ${
                   saved
-                    ? "bg-green-500/10 dark:bg-green-500/20 border border-green-500/20 dark:border-green-500/30 text-green-600 dark:text-green-400 font-bold"
-                    : "bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-500 hover:to-pink-500 text-white hover:shadow-[0_8px_24px_rgba(124,58,237,0.3)]"
+                    ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 shadow-sm"
+                    : "bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-950 shadow-lg shadow-slate-900/10 hover:shadow-slate-900/20"
                 }`}
               >
                 {saved ? (
-                  <><CheckCircle size={16} /> Saved!</>
+                  <><CheckCircle size={17} /> Saved!</>
                 ) : (
-                  <><Save size={16} /> Save Changes</>
+                  <><Save size={17} /> Save Changes</>
                 )}
               </button>
             </form>
@@ -106,18 +106,18 @@ function Settings() {
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-white dark:bg-white/[0.025] border border-black/[0.05] dark:border-white/[0.07] rounded-[24px] p-7 relative overflow-hidden shadow-sm dark:shadow-none"
+            className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-[28px] p-7 relative overflow-hidden shadow-sm"
           >
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
 
-            <h3 className="text-[13px] font-bold tracking-[.12em] uppercase text-slate-400 dark:text-white/30 mb-5 flex items-center gap-2">
-              <Shield size={13} className="text-violet-400" />
+            <h3 className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500 mb-5 flex items-center gap-2">
+              <Shield size={14} className="text-indigo-500" />
               Security
             </h3>
-            <p className="text-slate-500 dark:text-white/30 mb-5 text-[14px]">Password management coming soon.</p>
+            <p className="text-slate-500 dark:text-slate-500 mb-5 text-[15px] font-medium">Password management coming soon.</p>
             <button
               disabled
-              className="px-5 py-2.5 bg-slate-50 dark:bg-white/[0.03] border border-black/[0.05] dark:border-white/[0.06] text-slate-400 dark:text-white/20 rounded-xl text-[13px] font-bold cursor-not-allowed"
+              className="px-6 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 text-slate-400 dark:text-slate-600 rounded-xl text-[13.5px] font-bold cursor-not-allowed opacity-60"
             >
               Change Password
             </button>
@@ -126,17 +126,17 @@ function Settings() {
 
         {/* ── Right: Profile Card ── */}
         <div className="md:col-span-1">
-          <div className="bg-white dark:bg-white/[0.025] border border-black/[0.05] dark:border-white/[0.07] rounded-[24px] p-7 text-center sticky top-8 relative overflow-hidden shadow-sm dark:shadow-none">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
+          <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-[28px] p-7 text-center sticky top-8 relative overflow-hidden shadow-sm">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/20 to-transparent" />
 
             {/* Avatar */}
-            <div className="w-20 h-20 bg-gradient-to-br from-violet-600 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl font-black relative text-white">
-              <div className="absolute inset-[-3px] rounded-[18px] bg-gradient-to-br from-violet-600/25 to-pink-500/25 blur-[8px] -z-10" />
+            <div className="w-20 h-20 bg-gradient-to-br from-indigo-600 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-5 text-3xl font-black relative text-white shadow-xl shadow-indigo-500/10">
+              <div className="absolute inset-[-3px] rounded-[22px] bg-gradient-to-br from-indigo-600/25 to-rose-500/25 blur-[12px] -z-10" />
               {user?.name?.charAt(0)?.toUpperCase() || "U"}
             </div>
 
-            <h4 className="text-[17px] font-black text-slate-900 dark:text-white mb-1 tracking-tight">{user?.name}</h4>
-            <p className="text-slate-400 dark:text-white/25 text-[12px] mb-6">
+            <h4 className="text-[18px] font-black text-slate-900 dark:text-slate-50 mb-1 tracking-tight">{user?.name}</h4>
+            <p className="text-slate-400 dark:text-slate-500 text-[12.5px] mb-6 font-medium">
               Member since{" "}
               {new Date(user?.createdAt || Date.now()).toLocaleDateString("en-US", {
                 month: "short",
@@ -144,11 +144,11 @@ function Settings() {
               })}
             </p>
 
-            <div className="pt-5 border-t border-black/[0.05] dark:border-white/[0.05]">
-              <span className="text-[10px] font-bold uppercase tracking-[.18em] text-violet-600 dark:text-violet-400 block mb-2">
+            <div className="pt-5 border-t border-slate-100 dark:border-slate-800">
+              <span className="text-[11px] font-bold uppercase tracking-[.18em] text-indigo-600 dark:text-indigo-400 block mb-2">
                 Pro Plan
               </span>
-              <p className="text-[12px] text-slate-400 dark:text-white/25 leading-relaxed">
+              <p className="text-[13px] text-slate-500 dark:text-slate-500 leading-relaxed font-medium">
                 You have full access to all AI Studio features.
               </p>
             </div>
