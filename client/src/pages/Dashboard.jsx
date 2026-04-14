@@ -3,7 +3,7 @@ import axios from "axios";
 import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import * as htmlToImage from "html-to-image";
-import { Sparkles, Download, ChevronRight, ChevronLeft, Loader2, Image as ImageIcon, Type, Palette, Smartphone, Square, Maximize2, Eye, EyeOff } from "lucide-react";
+import { Sparkles, Download, ChevronRight, ChevronLeft, Loader2, Image as ImageIcon, Type, Palette, Smartphone, Square, Maximize2, Eye, EyeOff, RefreshCw, Copy, Check, Hash, Smile, Briefcase, Heart, GraduationCap, Layers } from "lucide-react";
 
 const THEMES = [
   { name: "Neon", bg: "from-violet-900 to-indigo-900", text: "text-violet-300", accent: "bg-violet-400", overlay: "bg-black/50" },
@@ -19,15 +19,30 @@ const FORMATS = [
   { name: "Portrait", value: "4:5", icon: Maximize2, ratio: "aspect-[4/5]" },
 ];
 
+const TONES = [
+  { name: "Educational", icon: GraduationCap, color: "text-blue-500" },
+  { name: "Inspirational", icon: Heart, color: "text-rose-500" },
+  { name: "Professional", icon: Briefcase, color: "text-slate-500" },
+  { name: "Funny", icon: Smile, color: "text-amber-500" },
+];
+
+const SLIDE_COUNTS = [3, 5, 7];
+
 function Dashboard() {
   const [idea, setIdea] = useState("");
   const [slides, setSlides] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [regenerating, setRegenerating] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slideDirection, setSlideDirection] = useState(1);
   const [format, setFormat] = useState(FORMATS[0]);
   const [theme, setTheme] = useState(THEMES[0]);
   const [showVisuals, setShowVisuals] = useState(true);
+  const [tone, setTone] = useState(TONES[0]);
+  const [slideCount, setSlideCount] = useState(5);
+  const [caption, setCaption] = useState(null);
+  const [captionLoading, setCaptionLoading] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const location = useLocation();
 
@@ -40,9 +55,14 @@ function Dashboard() {
     try {
       setLoading(true);
       setSlides([]);
+      setCaption(null);
       setCurrentSlide(0);
       const response = await axios.post("http://localhost:5000/api/generate", {
-        idea, format: format.value, theme: theme.name,
+        idea,
+        format: format.value,
+        theme: theme.name,
+        tone: tone.name,
+        slideCount,
       });
       const rawSlides = response.data.slides;
       setSlides(rawSlides.map((slide) => ({ ...slide, localImage: null })));
@@ -71,6 +91,79 @@ function Dashboard() {
       else alert(error.response?.data?.message || "Generation failed");
       setLoading(false);
     }
+  };
+
+  const handleRegenerateSlide = async () => {
+    if (!idea.trim()) return;
+    try {
+      setRegenerating(true);
+      const response = await axios.post("http://localhost:5000/api/regenerate-slide", {
+        idea,
+        slideIndex: currentSlide,
+        format: format.value,
+        theme: theme.name,
+      });
+      const newSlide = response.data.slide;
+      setSlides((prev) => {
+        const updated = [...prev];
+        updated[currentSlide] = {
+          ...updated[currentSlide],
+          text: newSlide.text,
+          visualPrompt: newSlide.visualPrompt,
+          localImage: null,
+        };
+        return updated;
+      });
+      try {
+        const imgUrl = `http://localhost:5000/api/proxy-image?prompt=${encodeURIComponent(newSlide.visualPrompt)}&seed=${Date.now()}`;
+        const imgResponse = await fetch(imgUrl);
+        const blob = await imgResponse.blob();
+        const base64 = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+        setSlides((prev) => {
+          const updated = [...prev];
+          updated[currentSlide] = { ...updated[currentSlide], localImage: base64 };
+          return updated;
+        });
+      } catch {
+        // image fail
+      }
+    } catch (error) {
+      alert(error.response?.data?.message || "Regenerate failed");
+    } finally {
+      setRegenerating(false);
+    }
+  };
+
+  const handleGenerateCaption = async () => {
+    if (!idea.trim()) return;
+    try {
+      setCaptionLoading(true);
+      setCaption(null);
+      const response = await axios.post("http://localhost:5000/api/generate-caption", {
+        idea,
+        theme: theme.name,
+        format: format.value,
+        tone: tone.name,
+      });
+      setCaption(response.data);
+    } catch (error) {
+      alert(error.response?.data?.message || "Caption generation failed");
+    } finally {
+      setCaptionLoading(false);
+    }
+  };
+
+  const handleCopyCaption = () => {
+    if (!caption) return;
+    const hashtags = caption.hashtags.map((h) => `#${h}`).join(" ");
+    const fullText = `${caption.caption}\n\n${hashtags}`;
+    navigator.clipboard.writeText(fullText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   const handleEditSlide = (newText) => {
@@ -125,12 +218,6 @@ function Dashboard() {
 
       {/* ── Header ── */}
       <div>
-        {/* <div className="flex items-center gap-2.5 mb-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center shadow-lg shadow-violet-500/30">
-            <Sparkles size={18} className="text-white" />
-          </div>
-          <span className="text-[11px] font-bold tracking-[.18em] uppercase text-violet-400">AI Studio</span>
-        </div> */}
         <h1 className="text-4xl md:text-6xl font-black mb-2 text-slate-900 dark:text-slate-50">
           Content{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 via-indigo-500 to-indigo-600">
@@ -140,7 +227,7 @@ function Dashboard() {
         <p className="text-slate-500 dark:text-slate-400 text-[16px] font-medium">Turn your raw ideas into stunning viral carousels.</p>
       </div>
 
-      {/* ── Idea Input — Full Width ── */}
+      {/* ── Idea Input ── */}
       <div className="w-full bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 relative overflow-hidden group hover:border-indigo-500/30 transition-all shadow-sm">
         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
         <div className="flex items-center gap-2 mb-4">
@@ -153,7 +240,6 @@ function Dashboard() {
           placeholder="e.g. 5 healthy breakfast ideas for kids that are quick and delicious..."
           className="w-full bg-transparent resize-none text-[17px] font-medium focus:outline-none placeholder:text-slate-300 dark:placeholder:text-slate-700 text-slate-900 dark:text-slate-50 min-h-[80px] leading-relaxed"
         />
-        <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-black/[0.02] dark:via-white/[0.04] to-transparent group-hover:via-indigo-500/10 transition-all" />
       </div>
 
       {/* ── Controls + Preview ── */}
@@ -231,6 +317,58 @@ function Dashboard() {
             </div>
           </div>
 
+          {/* Slide Count */}
+          <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-400/30 to-transparent" />
+            <div className="flex items-center gap-2 mb-4">
+              <Layers size={14} className="text-violet-500" />
+              <span className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500">Slide Count</span>
+            </div>
+            <div className="grid grid-cols-3 gap-2.5">
+              {SLIDE_COUNTS.map((count) => (
+                <button
+                  key={count}
+                  onClick={() => setSlideCount(count)}
+                  className={`py-3 rounded-xl border text-[15px] font-black transition-all ${
+                    slideCount === count
+                      ? "bg-violet-500/5 dark:bg-violet-500/10 border-violet-500/50 text-violet-600 dark:text-violet-400 shadow-sm"
+                      : "bg-white dark:bg-slate-800/20 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                  }`}
+                >
+                  {count}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Tone */}
+          <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-amber-400/30 to-transparent" />
+            <div className="flex items-center gap-2 mb-4">
+              <Smile size={14} className="text-amber-500" />
+              <span className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500">Tone</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {TONES.map((t) => {
+                const Icon = t.icon;
+                return (
+                  <button
+                    key={t.name}
+                    onClick={() => setTone(t)}
+                    className={`flex items-center gap-2 px-3 py-3 rounded-xl border text-[12px] font-bold transition-all ${
+                      tone.name === t.name
+                        ? "bg-amber-500/5 dark:bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400 shadow-sm"
+                        : "bg-white dark:bg-slate-800/20 border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-500 hover:text-slate-900 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/40"
+                    }`}
+                  >
+                    <Icon size={14} className={tone.name === t.name ? "text-amber-500" : t.color} />
+                    {t.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Generate */}
           <button
             onClick={handleGenerate}
@@ -256,12 +394,9 @@ function Dashboard() {
             >
               {/* Slide */}
               <div className="relative flex items-center justify-center w-full">
-
-                {/* Glow behind slide */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="w-[300px] h-[300px] bg-gradient-to-br from-violet-600/20 to-pink-500/20 rounded-full blur-[60px]" />
                 </div>
-
                 <div
                   className={`
                     relative overflow-hidden border border-white/[0.1] bg-black
@@ -291,6 +426,12 @@ function Dashboard() {
                       {showVisuals && !slides[currentSlide]?.localImage && (
                         <div className="absolute inset-0 z-0 bg-white/[0.03] animate-pulse" />
                       )}
+                      {regenerating && (
+                        <div className="absolute inset-0 z-20 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+                          <Loader2 size={28} className="animate-spin text-white" />
+                          <p className="text-white/70 text-[13px] font-bold tracking-wide">Regenerating slide...</p>
+                        </div>
+                      )}
                       <div className="relative z-10 flex flex-col items-center justify-center w-full h-full">
                         <div
                           contentEditable
@@ -312,19 +453,10 @@ function Dashboard() {
                     ))}
                   </div>
 
-                  {/* Prev/Next */}
-                  <button
-                    onClick={prevSlide}
-                    disabled={currentSlide === 0}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/10 text-white disabled:opacity-0 transition-all hover:bg-black/70 active:scale-90 z-30"
-                  >
+                  <button onClick={prevSlide} disabled={currentSlide === 0} className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/10 text-white disabled:opacity-0 transition-all hover:bg-black/70 active:scale-90 z-30">
                     <ChevronLeft size={20} />
                   </button>
-                  <button
-                    onClick={nextSlide}
-                    disabled={currentSlide === slides.length - 1}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/10 text-white disabled:opacity-0 transition-all hover:bg-black/70 active:scale-90 z-30"
-                  >
+                  <button onClick={nextSlide} disabled={currentSlide === slides.length - 1} className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/50 backdrop-blur-md flex items-center justify-center border border-white/10 text-white disabled:opacity-0 transition-all hover:bg-black/70 active:scale-90 z-30">
                     <ChevronRight size={20} />
                   </button>
                 </div>
@@ -338,14 +470,83 @@ function Dashboard() {
                     Slide {currentSlide + 1} / {slides.length}
                   </p>
                 </div>
-                <button
-                  onClick={downloadSlide}
-                  className="flex items-center gap-2 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-950 px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:-translate-y-[1px] shadow-sm active:scale-95"
-                >
-                  <Download size={15} />
-                  Export PNG
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleRegenerateSlide}
+                    disabled={regenerating || loading}
+                    className="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 px-4 py-2.5 rounded-xl font-bold text-[13px] transition-all active:scale-95 disabled:opacity-40"
+                  >
+                    {regenerating ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                    Redo
+                  </button>
+                  <button
+                    onClick={downloadSlide}
+                    disabled={loading}
+                    className="flex items-center gap-2 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-white text-white dark:text-slate-950 px-5 py-2.5 rounded-xl font-bold text-[13px] transition-all hover:-translate-y-[1px] shadow-sm active:scale-95 disabled:opacity-40"
+                  >
+                    <Download size={15} />
+                    Export PNG
+                  </button>
+                </div>
               </div>
+
+              {/* ── Caption Generator ── */}
+              <div className="w-full max-w-[420px] bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm transition-colors duration-500">
+                <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center gap-2">
+                    <Hash size={15} className="text-indigo-500" />
+                    <span className="text-[12px] font-bold tracking-[.12em] uppercase text-slate-400 dark:text-slate-500">Caption & Hashtags</span>
+                  </div>
+                  <button
+                    onClick={handleGenerateCaption}
+                    disabled={captionLoading || !idea.trim()}
+                    className="flex items-center gap-1.5 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl text-[12px] font-bold transition-all active:scale-95"
+                  >
+                    {captionLoading
+                      ? <><Loader2 size={12} className="animate-spin" /> Generating...</>
+                      : <><Sparkles size={12} /> Generate</>
+                    }
+                  </button>
+                </div>
+
+                {caption ? (
+                  <div className="p-5 flex flex-col gap-4">
+                    <div>
+                      <p className="text-[10px] font-bold tracking-[.12em] uppercase text-slate-400 dark:text-slate-500 mb-2">Caption</p>
+                      <p className="text-[14px] text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                        {caption.caption}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold tracking-[.12em] uppercase text-slate-400 dark:text-slate-500 mb-2">Hashtags</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {caption.hashtags.map((tag, i) => (
+                          <span key={i} className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-500/20 rounded-lg text-[11px] font-bold">
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <button
+                      onClick={handleCopyCaption}
+                      className={`w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-[13px] font-bold transition-all active:scale-95 ${
+                        copied
+                          ? "bg-green-50 dark:bg-green-500/10 border border-green-200 dark:border-green-500/20 text-green-600 dark:text-green-400"
+                          : "bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
+                      }`}
+                    >
+                      {copied ? <><Check size={14} /> Copied!</> : <><Copy size={14} /> Copy All</>}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="px-5 py-8 text-center">
+                    <p className="text-[13px] text-slate-400 dark:text-slate-600 font-medium">
+                      Generate a caption and hashtags for your post
+                    </p>
+                  </div>
+                )}
+              </div>
+
             </motion.div>
           ) : (
             /* Empty State */
