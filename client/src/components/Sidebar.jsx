@@ -113,7 +113,7 @@ function Sidebar() {
           </div>
           <div className="flex flex-col overflow-hidden min-w-0">
             <span className="text-[13px] font-bold truncate text-slate-700 dark:text-slate-200">{user?.name}</span>
-            <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate">Free Plan</span>
+            <span className="text-[10px] text-slate-400 dark:text-slate-500 truncate">AI Creator</span>
           </div>
         </div>
       </div>
