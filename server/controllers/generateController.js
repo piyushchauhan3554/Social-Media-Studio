@@ -4,7 +4,6 @@ import Post from "../models/Post.js";
 // Generate and Save content
 export const generateContent = async (req, res) => {
   try {
-    // generateController.js mein
 const { idea, format, theme, tone, slideCount } = req.body;
 
     if (!idea) {

@@ -15,7 +15,7 @@ function Navbar() {
     >
       {/* Logo */}
       <Link to="/" className="flex items-center gap-2.5">
-        <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-indigo-600 to-rose-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <div className="w-8 h-8 rounded-xl bg-linear-to-br from-indigo-600 to-rose-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
           <Sparkles size={15} className="text-white" />
         </div>
         <span className="text-[17px] font-black tracking-tight text-slate-900 dark:text-slate-50">
@@ -56,7 +56,7 @@ function Navbar() {
         <ThemeToggle />
         <Link
           to="/dashboard"
-          className="flex items-center gap-2 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-white px-5 py-2.5 rounded-xl text-[13.5px] font-bold text-white dark:text-slate-900 transition-all hover:-translate-y-[1px] shadow-lg shadow-slate-500/10 active:scale-95"
+          className="flex items-center gap-2 bg-slate-900 dark:bg-slate-50 hover:bg-slate-800 dark:hover:bg-white px-5 py-2.5 rounded-xl text-[13.5px] font-bold text-white dark:text-slate-900 transition-all hover:-translate-y-px shadow-lg shadow-slate-500/10 active:scale-95"
         >
           <Sparkles size={14} />
           Launch App

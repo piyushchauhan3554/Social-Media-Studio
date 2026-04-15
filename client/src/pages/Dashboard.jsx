@@ -123,14 +123,14 @@ function SortableThumb({ slide, index, isActive, onClick }) {
       {...attributes}
       {...listeners}
       onClick={onClick}
-      className={`relative flex-shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 cursor-grab active:cursor-grabbing transition-all ${
+      className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 cursor-grab active:cursor-grabbing transition-all ${
         isActive
           ? "border-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.4)]"
           : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
       }`}
     >
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${slide.themeBg || "from-slate-800 to-slate-900"}`}
+        className={`absolute inset-0 bg-linear-to-br ${slide.themeBg || "from-slate-800 to-slate-900"}`}
       />
       {slide.localImage && (
         <img
@@ -425,7 +425,7 @@ function Dashboard() {
       <div>
         <h1 className="text-4xl md:text-6xl font-black mb-2 text-slate-900 dark:text-slate-50">
           Content{" "}
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 via-indigo-500 to-indigo-600">
+          <span className="bg-clip-text text-transparent bg-linear-to-r from-rose-500 via-indigo-500 to-indigo-600">
             Generator
           </span>
         </h1>
@@ -436,7 +436,7 @@ function Dashboard() {
 
       {/* Idea Input */}
       <div className="w-full bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 relative overflow-hidden group hover:border-indigo-500/30 transition-all shadow-sm">
-        <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-500/30 to-transparent" />
+        <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-indigo-500/30 to-transparent" />
         <div className="flex items-center gap-2 mb-4">
           <Type size={14} className="text-rose-500" />
           <span className="text-[11px] font-bold tracking-[.14em] uppercase text-slate-400 dark:text-slate-500">
@@ -457,7 +457,7 @@ function Dashboard() {
         <div className="lg:col-span-2 flex flex-col gap-4">
           {/* Visuals + Format */}
           <div className="bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 relative overflow-hidden shadow-sm">
-            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-indigo-400/30 to-transparent" />
+            <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-indigo-400/30 to-transparent" />
             <div className="flex justify-between items-center mb-5">
               <div className="flex items-center gap-2">
                 <ImageIcon size={14} className="text-indigo-500" />

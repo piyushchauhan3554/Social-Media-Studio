@@ -6,7 +6,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 min-h-screen">
+      <div className="fixed inset-0 z-100 flex items-center justify-center p-4 min-h-screen">
 
         {/* Backdrop */}
         <motion.div
@@ -25,7 +25,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
           className="relative w-full max-w-sm bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[32px] p-7 overflow-hidden shadow-2xl"
         >
           {/* Top accent line */}
-          <div className={`absolute top-0 left-0 w-full h-[1px] ${type === "danger" ? "bg-gradient-to-r from-transparent via-rose-500/50 to-transparent" : "bg-gradient-to-r from-transparent via-indigo-500/50 to-transparent"}`} />
+          <div className={`absolute top-0 left-0 w-full h-px ${type === "danger" ? "bg-linear-to-r from-transparent via-rose-500/50 to-transparent" : "bg-linear-to-r from-transparent via-indigo-500/50 to-transparent"}`} />
 
           {/* Glow */}
           <div className={`absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 rounded-full blur-[60px] pointer-events-none ${type === "danger" ? "bg-red-500/5 dark:bg-red-500/10" : "bg-violet-500/5 dark:bg-violet-500/10"}`} />
@@ -63,7 +63,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
             </button>
             <button
               onClick={() => { onConfirm(); onClose(); }}
-              className={`flex-1 py-3.5 rounded-xl font-bold text-[14px] transition-all active:scale-95 hover:-translate-y-[1px] shadow-lg ${
+              className={`flex-1 py-3.5 rounded-xl font-bold text-[14px] transition-all active:scale-95 hover:-translate-y-px shadow-lg ${
                 type === "danger"
                   ? "bg-rose-600 hover:bg-rose-500 text-white shadow-rose-900/10"
                   : "bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-950 shadow-slate-900/10"

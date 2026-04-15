@@ -25,7 +25,7 @@ function Sidebar() {
       {/* Logo */}
       <div className="px-3 mb-9 hidden md:block">
         <div className="flex items-center gap-2.5 mb-1">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-linear-to-br from-violet-600 to-pink-500 flex items-center justify-center shrink-0">
             <Sparkles size={15} className="text-white" />
           </div>
           <h2 className="text-[18px] font-black tracking-tight text-slate-900 dark:text-white">
@@ -54,7 +54,7 @@ function Sidebar() {
             >
               {/* Active left bar */}
               {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-gradient-to-b from-violet-500 to-pink-500" />
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-full bg-linear-to-b from-violet-500 to-pink-500" />
               )}
               <Icon
                 size={18}
@@ -108,7 +108,7 @@ function Sidebar() {
 
         {/* User Card */}
         <div className="mt-3 px-3 py-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-xl flex items-center gap-3 transition-colors duration-500">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-violet-600 to-pink-500 flex items-center justify-center text-[12px] font-black text-white flex-shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-linear-to-br from-violet-600 to-pink-500 flex items-center justify-center text-[12px] font-black text-white shrink-0">
             {user?.name?.charAt(0)?.toUpperCase()}
           </div>
           <div className="flex flex-col overflow-hidden min-w-0">

@@ -18,7 +18,7 @@ export const getAIResponse = async (idea, format = "1:1", theme = "Modern", tone
   const groqClient = initGroq();
 
 
-  const prompt = `
+const prompt = `
 You are a Social Media Content Studio AI.
 Topic: ${idea}
 Format: ${format}

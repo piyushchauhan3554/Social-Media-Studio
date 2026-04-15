@@ -10,7 +10,6 @@ import imageRoutes from "./routes/imageRoute.js";
 // Connect to Database
 connectDB();
 
-
 const app = express();
 
 app.use(cors());
@@ -23,5 +22,5 @@ app.use("/api", imageRoutes);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT} 🚀`);
+  console.log(`Server running on port:${PORT}`);
 });

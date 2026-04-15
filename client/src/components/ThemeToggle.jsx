@@ -8,10 +8,10 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="relative flex items-center justify-center w-10 h-10 p-2 transition-all duration-300 rounded-xl bg-slate-50 dark:bg-white/[0.04] border border-black/[0.05] dark:border-white/[0.06] hover:bg-slate-100 dark:hover:bg-white/[0.08] hover:border-black/[0.1] dark:hover:border-white/[0.1] active:scale-95 group shadow-sm dark:shadow-none"
+      className="relative flex items-center justify-center w-10 h-10 p-2 transition-all duration-300 rounded-xl bg-slate-50 dark:bg-white/4 border border-black/5 dark:border-white/6 hover:bg-slate-100 dark:hover:bg-white/8 hover:border-black/10 dark:hover:border-white/10 active:scale-95 group shadow-sm dark:shadow-none"
       aria-label="Toggle theme"
     >
-      <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 bg-gradient-to-br from-violet-600/5 to-pink-500/5 blur-sm rounded-xl" />
+      <div className="absolute inset-0 transition-opacity duration-300 opacity-0 group-hover:opacity-100 bg-linear-to-br from-violet-600/5 to-pink-500/5 blur-sm rounded-xl" />
       
       <AnimatePresence mode="wait">
         {theme === "dark" ? (
