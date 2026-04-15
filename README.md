@@ -3,7 +3,6 @@
 > Turn a rough idea into a polished, ready-to-post social media carousel in seconds.
 
 **Live Demo:** [social-media-studio-rust.vercel.app](https://social-media-studio-rust.vercel.app)  
-**Backend API:** [ai-studio-backend-zoey.onrender.com](https://ai-studio-backend-zoey.onrender.com)
 
 ---
 
@@ -109,14 +108,14 @@ User
 ### 1. Clone the repo
 
 ```bash
-git clone https://github.com/your-username/ai-studio.git
-cd ai-studio
+git clone https://github.com/piyushchauhan3554/Social-Media-Studio.git
+cd social-media-studio
 ```
 
 ### 2. Setup Backend
 
 ```bash
-cd backend
+cd server
 npm install
 ```
 
@@ -137,7 +136,7 @@ npm run dev
 ### 3. Setup Frontend
 
 ```bash
-cd frontend
+cd client
 npm install
 ```
 
@@ -160,15 +159,18 @@ App will be live at `http://localhost:5173`
 ```
 ai-studio/
 │
-├── frontend/
+├── client/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── Sidebar.jsx
 │   │   │   ├── Navbar.jsx
 │   │   │   ├── ConfirmModal.jsx
 │   │   │   └── AnimatedBackground.jsx
+│   │   │   ├── DashboardLayout.jsx
+│   │   │   └── ThemeToggle.jsx
 │   │   ├── context/
 │   │   │   └── AuthContext.jsx
+│   │   │   └── ThemeContext.jsx
 │   │   ├── layouts/
 │   │   │   └── DashboardLayout.jsx
 │   │   └── pages/
@@ -182,7 +184,7 @@ ai-studio/
 │   └── public/
 │       └── favicon.svg
 │
-└── backend/
+└── server/
     ├── config/
     │   └── db.js
     ├── controllers/
@@ -281,7 +283,7 @@ GET /api/proxy-image?prompt=...&seed=...  → Fetch image from Pexels
 ## 👨‍💻 Author
 
 **Piyush**  
-Built as part of the Cuemath Social Media Studio challenge.
+Built as part of the Cuemath Social Media Studio Task.
 
 ---
 
