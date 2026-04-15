@@ -184,7 +184,7 @@ function Dashboard() {
       setSlides([]);
       setCaption(null);
       setCurrentSlide(0);
-      const response = await axios.post("http://localhost:5000/api/generate", {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/api/generate`, {
         idea,
         format: format.value,
         theme: theme.name,
@@ -204,7 +204,7 @@ function Dashboard() {
       setLoading(false);
       rawSlides.forEach(async (slide, index) => {
         try {
-          const imgUrl = `http://localhost:5000/api/proxy-image?prompt=${encodeURIComponent(slide.visualPrompt)}&seed=${index}`;
+          const imgUrl = `${import.meta.env.VITE_API_URL}/api/proxy-image?prompt=${encodeURIComponent(slide.visualPrompt)}&seed=${index}`;
           const imgResponse = await fetch(imgUrl);
           const blob = await imgResponse.blob();
           const base64 = await new Promise((resolve) => {
@@ -280,7 +280,7 @@ function Dashboard() {
     try {
       setRegenerating(true);
       const response = await axios.post(
-        "http://localhost:5000/api/regenerate-slide",
+        `${import.meta.env.VITE_API_URL}/api/regenerate-slide`,
         {
           idea,
           slideIndex: currentSlide,
@@ -300,7 +300,7 @@ function Dashboard() {
         return updated;
       });
       try {
-        const imgUrl = `http://localhost:5000/api/proxy-image?prompt=${encodeURIComponent(newSlide.visualPrompt)}&seed=${Date.now()}`;
+        const imgUrl = `${import.meta.env.VITE_API_URL}/api/proxy-image?prompt=${encodeURIComponent(newSlide.visualPrompt)}&seed=${Date.now()}`;
         const imgResponse = await fetch(imgUrl);
         const blob = await imgResponse.blob();
         const base64 = await new Promise((resolve) => {
@@ -330,7 +330,7 @@ function Dashboard() {
       setCaptionLoading(true);
       setCaption(null);
       const response = await axios.post(
-        "http://localhost:5000/api/generate-caption",
+        `${import.meta.env.VITE_API_URL}/api/generate-caption`,
         {
           idea,
           theme: theme.name,

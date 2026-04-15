@@ -16,7 +16,7 @@ function History() {
   const loadHistory = async () => {
     try {
       setIsRefreshing(true);
-      const res = await axios.get("http://localhost:5000/api/posts");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/posts`);
       setHistory(res.data);
       setError(null);
     } catch (err) {
@@ -34,7 +34,7 @@ function History() {
   const confirmDelete = async () => {
     if (!itemToDelete) return;
     try {
-      await axios.delete(`http://localhost:5000/api/posts/${itemToDelete._id}`);
+      await axios.delete(`${import.meta.env.VITE_API_URL}/api/posts/${itemToDelete._id}`);
       setHistory(history.filter((item) => item._id !== itemToDelete._id));
       setItemToDelete(null);
     } catch {
