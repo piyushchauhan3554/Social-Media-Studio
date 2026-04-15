@@ -10,9 +10,23 @@ import imageRoutes from "./routes/imageRoute.js";
 // Connect to Database
 connectDB();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://social-media-studio-rust.vercel.app/", // Vercel URL
+];
+
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
