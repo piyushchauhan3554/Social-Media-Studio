@@ -12,7 +12,7 @@ connectDB();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://social-media-studio-rust.vercel.app/", // Vercel URL
+  "https://social-media-studio-rust.vercel.app", // Vercel URL
 ];
 
 const app = express();
