@@ -282,8 +282,8 @@ GET /api/proxy-image?prompt=...&seed=...  → Fetch image from Pexels
 
 ## 👨‍💻 Author
 
-**Piyush**  
-Built as part of the Cuemath Social Media Studio Task.
+**Piyush Chauhan**  
+Built a Social Media Studio - Full Stack Application.
 
 ---
 
